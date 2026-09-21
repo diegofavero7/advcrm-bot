@@ -1,0 +1,69 @@
+{
+  "lead_understanding": {
+    "ambiguity": {
+      "alternative_area": null,
+      "alternative_subject": null,
+      "needs_confirmation": true,
+      "present": true,
+      "reason": "Área jurídica não informada"
+    },
+    "case_facts": [],
+    "confidence": 0.4,
+    "documents_availability": "partial",
+    "intent": "undetermined",
+    "language": "pt-BR",
+    "mentioned_documents": [
+      {
+        "availability": "available",
+        "label": "carteira de trabalho"
+      }
+    ],
+    "participants": [
+      {
+        "relationship": null,
+        "role": "contact_person"
+      }
+    ],
+    "primary_area": "undetermined",
+    "procedural_situation": {
+      "existing_case": false,
+      "prior_attempts": null,
+      "prior_denial": null,
+      "prior_request": null,
+      "stage": null
+    },
+    "reasoning_summary": "Solicita advogado sem descrever a matéria",
+    "safety": {
+      "detected_risks": [],
+      "level": "normal",
+      "reason": "Sem risco imediato",
+      "recommend_handoff": false
+    },
+    "schema_version": "lead_understanding.v1",
+    "secondary_area": null,
+    "subject": "undetermined",
+    "subsubjects": [],
+    "urgency": "normal"
+  },
+  "request": {
+    "conversation_id": "conv-001",
+    "event_id": "evt-001",
+    "known_facts": [],
+    "lead_id": "lead-001",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Tenho um problema e preciso de um advogado"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-demo",
+    "triage_state": "pending_classification"
+  }
+}

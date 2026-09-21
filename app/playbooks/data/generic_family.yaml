@@ -1,0 +1,43 @@
+id: generic_family
+version: "1.0.0"
+area: family
+subject: null
+title: Família — playbook genérico
+description: Triagem genérica de direito de família.
+priority_area: true
+max_questions: 3
+minimum_facts:
+  - key: family_issue
+    description: Situação familiar relatada
+optional_facts:
+  - key: involves_minors
+    description: Envolve menores
+  - key: existing_court_order
+    description: Existe ordem judicial prévia
+allowed_questions:
+  - id: q_issue
+    text: Qual situação familiar você precisa tratar?
+    maps_to_fact: family_issue
+  - id: q_minors
+    text: A situação envolve filhos menores?
+    maps_to_fact: involves_minors
+sufficiency_criteria:
+  - Situação familiar mínima identificada
+ambiguity_signals:
+  - Guarda vs alimentos não distinguidos
+  - Violência doméstica misturada sem priorização de risco
+risk_signals:
+  - domestic_violence
+  - child_or_vulnerable_person
+  - violence_or_threat
+handoff_conditions:
+  - Violência doméstica
+  - Pedido de humano
+  - Baixa confiança
+mentionable_documents:
+  - Certidões
+  - Decisões judiciais anteriores (apenas menção)
+policy_warnings:
+  - Não opinar sobre guarda ou alimentos
+  - "requires_human_analysis: family_court_context"
+  - Violência exige handoff imediato

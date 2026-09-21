@@ -1,0 +1,41 @@
+id: generic_labor
+version: "1.0.0"
+area: labor
+subject: null
+title: Trabalhista — playbook genérico
+description: Triagem genérica trabalhista sem parecer sobre verbas.
+priority_area: true
+max_questions: 3
+minimum_facts:
+  - key: labor_issue
+    description: Problema trabalhista relatado
+optional_facts:
+  - key: employment_status
+    description: Situação do vínculo
+  - key: dismissal_context
+    description: Contexto de desligamento, se houver
+allowed_questions:
+  - id: q_issue
+    text: Qual situação trabalhista você precisa tratar?
+    maps_to_fact: labor_issue
+  - id: q_status
+    text: Você ainda está no emprego ou já foi desligado?
+    maps_to_fact: employment_status
+sufficiency_criteria:
+  - Situação trabalhista mínima identificada
+ambiguity_signals:
+  - Vínculo não claro
+  - Mistura com previdenciário
+risk_signals:
+  - imminent_deadline
+  - violence_or_threat
+handoff_conditions:
+  - Baixa confiança
+  - Pedido de humano
+  - Assédio ou violência
+mentionable_documents:
+  - Termo de rescisão
+  - Contracheques
+policy_warnings:
+  - Não calcular verbas rescisórias automaticamente
+  - "requires_human_analysis: labor_amounts_and_deadlines"

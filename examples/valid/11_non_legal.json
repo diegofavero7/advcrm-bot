@@ -1,0 +1,69 @@
+{
+  "lead_understanding": {
+    "ambiguity": {
+      "alternative_area": null,
+      "alternative_subject": null,
+      "needs_confirmation": false,
+      "present": false,
+      "reason": null
+    },
+    "case_facts": [],
+    "confidence": 0.95,
+    "documents_availability": "partial",
+    "intent": "non_legal_contact",
+    "language": "pt-BR",
+    "mentioned_documents": [
+      {
+        "availability": "available",
+        "label": "carteira de trabalho"
+      }
+    ],
+    "participants": [
+      {
+        "relationship": null,
+        "role": "contact_person"
+      }
+    ],
+    "primary_area": "other",
+    "procedural_situation": {
+      "existing_case": false,
+      "prior_attempts": null,
+      "prior_denial": null,
+      "prior_request": null,
+      "stage": null
+    },
+    "reasoning_summary": "Pergunta administrativa sobre horário, sem demanda jurídica",
+    "safety": {
+      "detected_risks": [],
+      "level": "normal",
+      "reason": "Sem risco",
+      "recommend_handoff": false
+    },
+    "schema_version": "lead_understanding.v1",
+    "secondary_area": null,
+    "subject": "other",
+    "subsubjects": [],
+    "urgency": "normal"
+  },
+  "request": {
+    "conversation_id": "conv-001",
+    "event_id": "evt-001",
+    "known_facts": [],
+    "lead_id": "lead-001",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Qual o horário de funcionamento do escritório?"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-demo",
+    "triage_state": "pending_classification"
+  }
+}

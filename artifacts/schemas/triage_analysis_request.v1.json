@@ -1,0 +1,359 @@
+{
+  "$defs": {
+    "ContentType": {
+      "enum": [
+        "text",
+        "audio",
+        "image",
+        "document",
+        "unsupported"
+      ],
+      "title": "ContentType",
+      "type": "string"
+    },
+    "ConversationMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "content_type": {
+          "$ref": "#/$defs/ContentType"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "direction": {
+          "$ref": "#/$defs/MessageDirection"
+        },
+        "message_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "reply_to_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reply To Message Id"
+        },
+        "role": {
+          "$ref": "#/$defs/MessageRole"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        }
+      },
+      "required": [
+        "content_type",
+        "created_at",
+        "direction",
+        "message_id",
+        "reply_to_message_id",
+        "role",
+        "text"
+      ],
+      "title": "ConversationMessage",
+      "type": "object"
+    },
+    "FactCertainty": {
+      "enum": [
+        "explicit",
+        "inferred",
+        "uncertain"
+      ],
+      "title": "FactCertainty",
+      "type": "string"
+    },
+    "HandoffReason": {
+      "enum": [
+        "existing_client",
+        "case_status_request",
+        "immediate_risk",
+        "criminal_emergency",
+        "legal_deadline_risk",
+        "low_confidence",
+        "conflicting_information",
+        "user_requested_human",
+        "unsupported_content",
+        "unsupported_request",
+        "sensitive_situation",
+        "maximum_questions_reached",
+        "system_policy",
+        "other"
+      ],
+      "title": "HandoffReason",
+      "type": "string"
+    },
+    "Intent": {
+      "enum": [
+        "new_legal_lead",
+        "existing_client_case_status",
+        "existing_client_other_request",
+        "non_legal_contact",
+        "spam",
+        "undetermined"
+      ],
+      "title": "Intent",
+      "type": "string"
+    },
+    "KnownFact": {
+      "additionalProperties": false,
+      "description": "Fato conhecido com origem rastreável — não é dict livre.",
+      "properties": {
+        "certainty": {
+          "$ref": "#/$defs/FactCertainty"
+        },
+        "from_trusted_crm_context": {
+          "default": false,
+          "title": "From Trusted Crm Context",
+          "type": "boolean"
+        },
+        "key": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Message Ids",
+          "type": "array"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "certainty",
+        "from_trusted_crm_context",
+        "key",
+        "source_message_ids",
+        "value"
+      ],
+      "title": "KnownFact",
+      "type": "object"
+    },
+    "LegalArea": {
+      "enum": [
+        "civil",
+        "family",
+        "labor",
+        "criminal",
+        "consumer",
+        "social_security",
+        "tax",
+        "business",
+        "real_estate",
+        "administrative",
+        "traffic",
+        "succession",
+        "other",
+        "undetermined"
+      ],
+      "title": "LegalArea",
+      "type": "string"
+    },
+    "MessageDirection": {
+      "enum": [
+        "inbound",
+        "outbound"
+      ],
+      "title": "MessageDirection",
+      "type": "string"
+    },
+    "MessageRole": {
+      "enum": [
+        "lead",
+        "agent",
+        "system"
+      ],
+      "title": "MessageRole",
+      "type": "string"
+    },
+    "PreviousDecisionSummary": {
+      "additionalProperties": false,
+      "description": "Resumo fechado da decisão anterior — sem payload livre.",
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/TriageAction"
+        },
+        "handoff_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HandoffReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "intent": {
+          "$ref": "#/$defs/Intent"
+        },
+        "primary_area": {
+          "$ref": "#/$defs/LegalArea"
+        },
+        "requires_human_handoff": {
+          "title": "Requires Human Handoff",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "previous_decision.v1",
+          "default": "previous_decision.v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "handoff_reason",
+        "intent",
+        "primary_area",
+        "requires_human_handoff",
+        "schema_version",
+        "subject"
+      ],
+      "title": "PreviousDecisionSummary",
+      "type": "object"
+    },
+    "RequestSource": {
+      "enum": [
+        "whatsapp",
+        "crm_manual",
+        "system",
+        "import",
+        "other",
+        "undetermined"
+      ],
+      "title": "RequestSource",
+      "type": "string"
+    },
+    "TriageAction": {
+      "enum": [
+        "wait_for_more_messages",
+        "ask_question",
+        "route_lead",
+        "request_human_review",
+        "human_handoff",
+        "ignore"
+      ],
+      "title": "TriageAction",
+      "type": "string"
+    },
+    "TriageState": {
+      "enum": [
+        "collecting_messages",
+        "pending_classification",
+        "classified",
+        "collecting_information",
+        "waiting_lead_reply",
+        "pending_action_approval",
+        "pending_human_review",
+        "ready_for_handoff",
+        "human_assigned",
+        "completed",
+        "cancelled",
+        "failed"
+      ],
+      "title": "TriageState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Contrato de entrada autorizado pelo AdvCRM.",
+  "properties": {
+    "conversation_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Conversation Id",
+      "type": "string"
+    },
+    "event_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Event Id",
+      "type": "string"
+    },
+    "known_facts": {
+      "items": {
+        "$ref": "#/$defs/KnownFact"
+      },
+      "title": "Known Facts",
+      "type": "array"
+    },
+    "lead_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Lead Id",
+      "type": "string"
+    },
+    "messages": {
+      "items": {
+        "$ref": "#/$defs/ConversationMessage"
+      },
+      "minItems": 1,
+      "title": "Messages",
+      "type": "array"
+    },
+    "previous_decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PreviousDecisionSummary"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "$ref": "#/$defs/RequestSource"
+    },
+    "tenant_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "triage_state": {
+      "$ref": "#/$defs/TriageState"
+    }
+  },
+  "required": [
+    "conversation_id",
+    "event_id",
+    "known_facts",
+    "lead_id",
+    "messages",
+    "previous_decision",
+    "source",
+    "tenant_id",
+    "triage_state"
+  ],
+  "title": "TriageAnalysisRequest",
+  "type": "object"
+}

@@ -1,0 +1,41 @@
+id: generic_criminal
+version: "1.0.0"
+area: criminal
+subject: null
+title: Criminal — playbook genérico
+description: >
+  Triagem genérica criminal. Situações de risco imediato exigem handoff.
+  Não presta aconselhamento criminal conclusivo.
+priority_area: true
+max_questions: 2
+minimum_facts:
+  - key: criminal_context
+    description: Contexto criminal relatado
+optional_facts:
+  - key: custody_status
+    description: Situação de liberdade/prisão
+allowed_questions:
+  - id: q_context
+    text: Pode descrever brevemente a situação (sem detalhes sensíveis desnecessários)?
+    maps_to_fact: criminal_context
+sufficiency_criteria:
+  - Encaminhamento humano quando houver risco, prisão ou urgência
+ambiguity_signals:
+  - Papel da pessoa (vítima vs investigado) não claro
+risk_signals:
+  - arrest_or_detention
+  - violence_or_threat
+  - domestic_violence
+  - self_harm
+handoff_conditions:
+  - Qualquer risco imediato
+  - Prisão ou flagrante
+  - Pedido de humano
+  - Conteúdo sensível indispensável
+mentionable_documents:
+  - Boletim de ocorrência (apenas menção de disponibilidade)
+policy_warnings:
+  - Não aconselhar estratégia criminal
+  - Urgência operacional não é mérito
+  - "requires_human_analysis: criminal_procedure"
+  - Preferir handoff a perguntas prolongadas

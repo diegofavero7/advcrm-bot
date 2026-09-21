@@ -1,0 +1,73 @@
+id: social_security_prison_allowance
+version: "1.0.0"
+area: social_security
+subject: prison_allowance
+title: Auxílio-reclusão — coleta estruturada
+description: >
+  Playbook específico para triagem de auxílio-reclusão.
+  Não conclui elegibilidade nem aplica limites legais mutáveis.
+priority_area: true
+max_questions: 5
+minimum_facts:
+  - key: relationship_to_detainee
+    description: Relação do solicitante com a pessoa presa
+  - key: approximate_prison_date
+    description: Data aproximada da prisão
+  - key: reported_regime
+    description: Regime informado (se conhecido)
+  - key: urban_or_rural_activity
+    description: Atividade urbana ou rural do segurado
+optional_facts:
+  - key: contribution_history_approx
+    description: Existência e duração aproximada de contribuições
+  - key: income_or_benefit_during_detention
+    description: Recebimento de salário ou benefício durante a prisão
+  - key: dependents
+    description: Dependentes
+  - key: prior_request
+    description: Pedido anterior
+  - key: prior_denial
+    description: Eventual negativa
+allowed_questions:
+  - id: q_relationship
+    text: Qual é a sua relação com a pessoa que está presa?
+    maps_to_fact: relationship_to_detainee
+  - id: q_prison_date
+    text: Em que período aproximado ocorreu a prisão?
+    maps_to_fact: approximate_prison_date
+  - id: q_regime
+    text: Você sabe informar o regime de cumprimento da pena?
+    maps_to_fact: reported_regime
+  - id: q_activity
+    text: A atividade do segurado era urbana ou rural?
+    maps_to_fact: urban_or_rural_activity
+  - id: q_contributions
+    text: Havia contribuições previdenciárias? Por quanto tempo, aproximadamente?
+    maps_to_fact: contribution_history_approx
+sufficiency_criteria:
+  - Relação com a pessoa presa identificada
+  - Data aproximada da prisão informada
+  - Natureza urbana ou rural da atividade informada
+ambiguity_signals:
+  - Relação familiar não clara
+  - Datas conflitantes entre mensagens
+  - Regime não informado e necessário para encaminhamento
+risk_signals:
+  - arrest_or_detention
+  - child_or_vulnerable_person
+  - sensitive_personal_data
+handoff_conditions:
+  - Pedido explícito de atendente humano
+  - Risco imediato ou violência
+  - Máximo de perguntas atingido sem suficiência
+  - Conflito de informações essenciais
+mentionable_documents:
+  - Certidão de casamento ou união estável (mencionar disponibilidade)
+  - Documentos de dependentes
+  - Comprovantes de contribuição (sem solicitar conteúdo sensível nesta fase)
+  - Documento oficial da prisão (se mencionado)
+policy_warnings:
+  - Não concluir elegibilidade ao benefício
+  - Limites de renda e regras legais são mutáveis e exigem análise humana
+  - "requires_human_analysis: contribution_and_income_thresholds"
+  - Não solicitar números de documentos sensíveis em texto livre

@@ -1,0 +1,17 @@
+{
+  "action": "ask_question",
+  "handoff_reason": null,
+  "missing_information": [
+    "approximate_prison_date"
+  ],
+  "policy_flags": [
+    "playbook_prison_allowance"
+  ],
+  "priority": "normal",
+  "proposed_question": null,
+  "requires_human_handoff": false,
+  "schema_version": "triage_next_step.v1",
+  "selected_missing_information": [
+    "approximate_prison_date"
+  ]
+}

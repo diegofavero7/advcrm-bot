@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "HandoffReason": {
+      "enum": [
+        "existing_client",
+        "case_status_request",
+        "immediate_risk",
+        "criminal_emergency",
+        "legal_deadline_risk",
+        "low_confidence",
+        "conflicting_information",
+        "user_requested_human",
+        "unsupported_content",
+        "unsupported_request",
+        "sensitive_situation",
+        "maximum_questions_reached",
+        "system_policy",
+        "other"
+      ],
+      "title": "HandoffReason",
+      "type": "string"
+    },
+    "Priority": {
+      "enum": [
+        "low",
+        "normal",
+        "high",
+        "critical"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "TriageAction": {
+      "enum": [
+        "wait_for_more_messages",
+        "ask_question",
+        "route_lead",
+        "request_human_review",
+        "human_handoff",
+        "ignore"
+      ],
+      "title": "TriageAction",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Próximo passo proposto — o AdvCRM decide e executa ações externas.",
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/TriageAction"
+    },
+    "handoff_reason": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HandoffReason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "missing_information": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Missing Information",
+      "type": "array"
+    },
+    "policy_flags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Policy Flags",
+      "type": "array"
+    },
+    "priority": {
+      "$ref": "#/$defs/Priority"
+    },
+    "proposed_question": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Proposed Question"
+    },
+    "requires_human_handoff": {
+      "title": "Requires Human Handoff",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "triage_next_step.v1",
+      "default": "triage_next_step.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "selected_missing_information": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Selected Missing Information",
+      "type": "array"
+    }
+  },
+  "required": [
+    "action",
+    "handoff_reason",
+    "missing_information",
+    "policy_flags",
+    "priority",
+    "proposed_question",
+    "requires_human_handoff",
+    "schema_version",
+    "selected_missing_information"
+  ],
+  "title": "TriageNextStep",
+  "type": "object"
+}

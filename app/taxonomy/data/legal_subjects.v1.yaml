@@ -1,0 +1,170 @@
+taxonomy_version: legal_subjects.v1
+description: >
+  Catálogo controlado de áreas e assuntos jurídicos.
+  Assuntos oficiais nunca são texto livre.
+areas:
+  social_security:
+    subjects:
+      retirement: []
+      permanent_disability_benefit: []
+      temporary_disability_benefit: []
+      bpc_loas: []
+      prison_allowance:
+        - spouse_relationship
+        - partner_relationship
+        - child_dependent
+        - parent_dependent
+        - prison_date
+        - prison_regime
+        - urban_activity
+        - rural_activity
+        - contribution_history
+        - income_during_detention
+        - prior_request
+        - prior_denial
+        - other
+        - undetermined
+      prison_allowance_denial: []
+      death_pension: []
+      maternity_benefit: []
+      accident_benefit: []
+      benefit_denial: []
+      benefit_suspension: []
+      benefit_review: []
+      rural_benefit: []
+      other: []
+      undetermined: []
+  consumer:
+    subjects:
+      vehicle_purchase_irregularities:
+        - professional_seller
+        - private_seller
+        - purchase_date
+        - contract_values
+        - financing_institution
+        - hidden_defect
+        - auction_history
+        - discovery_circumstances
+        - prior_resolution_attempt
+        - repossession_risk
+        - collection_risk
+        - other
+        - undetermined
+      vehicle_hidden_defect: []
+      undisclosed_auction_history: []
+      financing_amount_discrepancy: []
+      unauthorized_addon: []
+      banking_fraud: []
+      unauthorized_charge: []
+      wrongful_credit_listing: []
+      product_defect: []
+      service_failure: []
+      health_plan: []
+      online_purchase: []
+      air_travel: []
+      utility_service: []
+      other: []
+      undetermined: []
+  labor:
+    subjects:
+      dismissal_without_just_cause: []
+      unpaid_severance: []
+      overtime: []
+      wage_claim: []
+      workplace_accident: []
+      harassment: []
+      discrimination: []
+      fgts: []
+      occupational_disease: []
+      employment_recognition: []
+      working_hours: []
+      other: []
+      undetermined: []
+  family:
+    subjects:
+      child_custody: []
+      child_support: []
+      spousal_support: []
+      divorce: []
+      domestic_violence: []
+      paternity: []
+      visitation: []
+      property_division: []
+      restraining_order: []
+      adoption: []
+      other: []
+      undetermined: []
+  civil:
+    subjects:
+      debt_collection: []
+      contract_breach: []
+      property_damage: []
+      indemnification: []
+      neighbor_dispute: []
+      possession: []
+      extra_contractual_liability: []
+      other: []
+      undetermined: []
+  criminal:
+    subjects:
+      flagrant_arrest: []
+      police_inquiry: []
+      criminal_defense: []
+      victim_complaint: []
+      protective_measure: []
+      drug_offense: []
+      theft_or_robbery: []
+      domestic_violence_criminal: []
+      habeas_corpus: []
+      other: []
+      undetermined: []
+  tax:
+    subjects:
+      tax_assessment: []
+      tax_collection: []
+      tax_refund: []
+      other: []
+      undetermined: []
+  business:
+    subjects:
+      company_formation: []
+      partner_dispute: []
+      commercial_contract: []
+      other: []
+      undetermined: []
+  real_estate:
+    subjects:
+      purchase_sale: []
+      lease: []
+      construction_defect: []
+      other: []
+      undetermined: []
+  administrative:
+    subjects:
+      public_service: []
+      administrative_appeal: []
+      licensing: []
+      other: []
+      undetermined: []
+  traffic:
+    subjects:
+      traffic_fine: []
+      license_suspension: []
+      traffic_accident: []
+      other: []
+      undetermined: []
+  succession:
+    subjects:
+      inventory: []
+      will: []
+      heirship: []
+      other: []
+      undetermined: []
+  other:
+    subjects:
+      other: []
+      undetermined: []
+  undetermined:
+    subjects:
+      other: []
+      undetermined: []

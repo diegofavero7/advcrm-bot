@@ -1,0 +1,466 @@
+{
+  "$defs": {
+    "Ambiguity": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_area": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LegalArea"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "alternative_subject": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alternative Subject"
+        },
+        "needs_confirmation": {
+          "title": "Needs Confirmation",
+          "type": "boolean"
+        },
+        "present": {
+          "title": "Present",
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "alternative_area",
+        "alternative_subject",
+        "needs_confirmation",
+        "present",
+        "reason"
+      ],
+      "title": "Ambiguity",
+      "type": "object"
+    },
+    "CaseFact": {
+      "additionalProperties": false,
+      "properties": {
+        "certainty": {
+          "$ref": "#/$defs/FactCertainty"
+        },
+        "from_trusted_crm_context": {
+          "default": false,
+          "title": "From Trusted Crm Context",
+          "type": "boolean"
+        },
+        "key": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Message Ids",
+          "type": "array"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "certainty",
+        "from_trusted_crm_context",
+        "key",
+        "source_message_ids",
+        "value"
+      ],
+      "title": "CaseFact",
+      "type": "object"
+    },
+    "DocumentAvailability": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable",
+        "unknown"
+      ],
+      "title": "DocumentAvailability",
+      "type": "string"
+    },
+    "FactCertainty": {
+      "enum": [
+        "explicit",
+        "inferred",
+        "uncertain"
+      ],
+      "title": "FactCertainty",
+      "type": "string"
+    },
+    "Intent": {
+      "enum": [
+        "new_legal_lead",
+        "existing_client_case_status",
+        "existing_client_other_request",
+        "non_legal_contact",
+        "spam",
+        "undetermined"
+      ],
+      "title": "Intent",
+      "type": "string"
+    },
+    "Language": {
+      "enum": [
+        "pt-BR",
+        "other",
+        "undetermined"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "LegalArea": {
+      "enum": [
+        "civil",
+        "family",
+        "labor",
+        "criminal",
+        "consumer",
+        "social_security",
+        "tax",
+        "business",
+        "real_estate",
+        "administrative",
+        "traffic",
+        "succession",
+        "other",
+        "undetermined"
+      ],
+      "title": "LegalArea",
+      "type": "string"
+    },
+    "MentionedDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/DocumentAvailability"
+        },
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "availability",
+        "label"
+      ],
+      "title": "MentionedDocument",
+      "type": "object"
+    },
+    "Participant": {
+      "additionalProperties": false,
+      "properties": {
+        "relationship": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relationship"
+        },
+        "role": {
+          "$ref": "#/$defs/ParticipantRole"
+        }
+      },
+      "required": [
+        "relationship",
+        "role"
+      ],
+      "title": "Participant",
+      "type": "object"
+    },
+    "ParticipantRole": {
+      "enum": [
+        "contact_person",
+        "potential_claimant",
+        "affected_person",
+        "opposing_party",
+        "dependent",
+        "witness",
+        "unknown"
+      ],
+      "title": "ParticipantRole",
+      "type": "string"
+    },
+    "ProceduralSituation": {
+      "additionalProperties": false,
+      "properties": {
+        "existing_case": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Existing Case"
+        },
+        "prior_attempts": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prior Attempts"
+        },
+        "prior_denial": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prior Denial"
+        },
+        "prior_request": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prior Request"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        }
+      },
+      "required": [
+        "existing_case",
+        "prior_attempts",
+        "prior_denial",
+        "prior_request",
+        "stage"
+      ],
+      "title": "ProceduralSituation",
+      "type": "object"
+    },
+    "RiskFlag": {
+      "enum": [
+        "violence_or_threat",
+        "arrest_or_detention",
+        "domestic_violence",
+        "child_or_vulnerable_person",
+        "imminent_deadline",
+        "loss_of_home",
+        "medical_emergency",
+        "self_harm",
+        "sensitive_personal_data",
+        "fraud_or_scam",
+        "other"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    },
+    "SafetyAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "detected_risks": {
+          "items": {
+            "$ref": "#/$defs/RiskFlag"
+          },
+          "title": "Detected Risks",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/UrgencyLevel"
+        },
+        "reason": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "recommend_handoff": {
+          "title": "Recommend Handoff",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "detected_risks",
+        "level",
+        "reason",
+        "recommend_handoff"
+      ],
+      "title": "SafetyAssessment",
+      "type": "object"
+    },
+    "UrgencyLevel": {
+      "enum": [
+        "normal",
+        "high",
+        "immediate"
+      ],
+      "title": "UrgencyLevel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Compreensão estruturada v1 — sem mérito jurídico conclusivo.",
+  "properties": {
+    "ambiguity": {
+      "$ref": "#/$defs/Ambiguity"
+    },
+    "case_facts": {
+      "items": {
+        "$ref": "#/$defs/CaseFact"
+      },
+      "title": "Case Facts",
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "documents_availability": {
+      "$ref": "#/$defs/DocumentAvailability"
+    },
+    "intent": {
+      "$ref": "#/$defs/Intent"
+    },
+    "language": {
+      "$ref": "#/$defs/Language"
+    },
+    "mentioned_documents": {
+      "items": {
+        "$ref": "#/$defs/MentionedDocument"
+      },
+      "title": "Mentioned Documents",
+      "type": "array"
+    },
+    "participants": {
+      "items": {
+        "$ref": "#/$defs/Participant"
+      },
+      "title": "Participants",
+      "type": "array"
+    },
+    "primary_area": {
+      "$ref": "#/$defs/LegalArea"
+    },
+    "procedural_situation": {
+      "$ref": "#/$defs/ProceduralSituation"
+    },
+    "reasoning_summary": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Reasoning Summary",
+      "type": "string"
+    },
+    "safety": {
+      "$ref": "#/$defs/SafetyAssessment"
+    },
+    "schema_version": {
+      "const": "lead_understanding.v1",
+      "default": "lead_understanding.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "secondary_area": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LegalArea"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "subject": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Subject",
+      "type": "string"
+    },
+    "subsubjects": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Subsubjects",
+      "type": "array"
+    },
+    "urgency": {
+      "$ref": "#/$defs/UrgencyLevel"
+    }
+  },
+  "required": [
+    "ambiguity",
+    "case_facts",
+    "confidence",
+    "documents_availability",
+    "intent",
+    "language",
+    "mentioned_documents",
+    "participants",
+    "primary_area",
+    "procedural_situation",
+    "reasoning_summary",
+    "safety",
+    "schema_version",
+    "secondary_area",
+    "subject",
+    "subsubjects",
+    "urgency"
+  ],
+  "title": "LeadUnderstanding",
+  "type": "object"
+}

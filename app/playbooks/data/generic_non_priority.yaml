@@ -1,0 +1,46 @@
+id: generic_non_priority
+version: "1.0.0"
+area: other
+subject: null
+title: Áreas não prioritárias — classificação e encaminhamento
+description: >
+  Playbook único para tax, business, real_estate, administrative, traffic,
+  succession, other e undetermined. Sem questionário jurídico extensivo.
+priority_area: false
+applies_to_areas:
+  - tax
+  - business
+  - real_estate
+  - administrative
+  - traffic
+  - succession
+  - other
+  - undetermined
+max_questions: 1
+minimum_facts:
+  - key: reported_issue
+    description: Situação relatada pelo contato
+optional_facts: []
+allowed_questions:
+  - id: q_brief
+    text: Em uma frase, qual assunto você precisa tratar?
+    maps_to_fact: reported_issue
+sufficiency_criteria:
+  - Classificação da área quando possível
+  - Encaminhamento humano sem questionário longo
+ambiguity_signals:
+  - Área indeterminada
+  - Duas áreas concorrentes
+risk_signals:
+  - imminent_deadline
+  - other
+handoff_conditions:
+  - Após classificação mínima
+  - Baixa confiança
+  - Pedido de humano
+  - Área não prioritária por padrão
+mentionable_documents: []
+policy_warnings:
+  - Não inventar questionários extensos para áreas não prioritárias
+  - Encaminhar a humano após classificação
+  - "requires_human_analysis: non_priority_area"

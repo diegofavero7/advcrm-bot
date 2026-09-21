@@ -1,0 +1,21 @@
+{
+  "conversation_id": "c",
+  "event_id": "evt-x",
+  "known_facts": [],
+  "lead_id": "l",
+  "messages": [
+    {
+      "content_type": "text",
+      "created_at": "2026-09-20T14:00:00",
+      "direction": "inbound",
+      "message_id": "m1",
+      "reply_to_message_id": null,
+      "role": "lead",
+      "text": "olá"
+    }
+  ],
+  "previous_decision": null,
+  "source": "whatsapp",
+  "tenant_id": "t",
+  "triage_state": "pending_classification"
+}

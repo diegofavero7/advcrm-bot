@@ -1,0 +1,11 @@
+{
+  "conversation_id": "c",
+  "event_id": "evt-x",
+  "known_facts": [],
+  "lead_id": "l",
+  "messages": [],
+  "previous_decision": null,
+  "source": "whatsapp",
+  "tenant_id": "t",
+  "triage_state": "pending_classification"
+}

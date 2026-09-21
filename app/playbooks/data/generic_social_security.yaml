@@ -1,0 +1,42 @@
+id: generic_social_security
+version: "1.0.0"
+area: social_security
+subject: null
+title: Previdenciário — playbook genérico
+description: Triagem genérica previdenciária sem questionário extensivo por assunto.
+priority_area: true
+max_questions: 3
+minimum_facts:
+  - key: benefit_or_issue
+    description: Benefício ou problema previdenciário relatado
+optional_facts:
+  - key: prior_request
+    description: Pedido anterior ao INSS ou equivalente
+  - key: prior_denial
+    description: Negativa anterior
+allowed_questions:
+  - id: q_issue
+    text: Qual benefício ou situação previdenciária você precisa tratar?
+    maps_to_fact: benefit_or_issue
+  - id: q_prior
+    text: Já houve pedido ou negativa anterior?
+    maps_to_fact: prior_request
+sufficiency_criteria:
+  - Assunto previdenciário identificado ou marcado como undetermined com handoff
+ambiguity_signals:
+  - Benefício não identificado
+  - Mistura de benefícios distintos
+risk_signals:
+  - imminent_deadline
+  - medical_emergency
+  - child_or_vulnerable_person
+handoff_conditions:
+  - Assunto fora dos playbooks específicos
+  - Baixa confiança
+  - Pedido de humano
+mentionable_documents:
+  - Carta de concessão ou indeferimento
+  - Comprovantes de contribuição
+policy_warnings:
+  - Não aplicar tabelas de contribuição ou renda como verdade permanente
+  - "requires_human_analysis: legal_thresholds"

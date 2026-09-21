@@ -1,0 +1,73 @@
+id: consumer_vehicle_purchase_irregularities
+version: "1.0.0"
+area: consumer
+subject: vehicle_purchase_irregularities
+title: Compra de veículo com irregularidades — coleta estruturada
+description: >
+  Playbook específico para irregularidades na compra de veículo.
+  Não emite parecer jurídico nem recomenda ajuizamento.
+priority_area: true
+max_questions: 5
+minimum_facts:
+  - key: seller_type
+    description: Vendedor profissional ou particular
+  - key: purchase_date
+    description: Data da compra
+  - key: reported_irregularity
+    description: Defeitos ou irregularidades relatadas
+optional_facts:
+  - key: contract_values
+    description: Valores informados nos contratos
+  - key: financing_institution
+    description: Instituição financiadora
+  - key: auction_history
+    description: Passagem por leilão
+  - key: discovery_when_how
+    description: Quando e como houve descoberta
+  - key: prior_resolution_attempt
+    description: Tentativa prévia de solução
+  - key: collection_or_repossession
+    description: Cobrança, busca e apreensão ou risco imediato
+allowed_questions:
+  - id: q_seller
+    text: A compra foi feita com loja/concessionária ou com particular?
+    maps_to_fact: seller_type
+  - id: q_date
+    text: Em que data aproximada ocorreu a compra?
+    maps_to_fact: purchase_date
+  - id: q_issue
+    text: Qual irregularidade ou defeito você identificou?
+    maps_to_fact: reported_irregularity
+  - id: q_auction
+    text: Você ficou sabendo se o veículo passou por leilão?
+    maps_to_fact: auction_history
+  - id: q_risk
+    text: Há cobrança, busca e apreensão ou outro prazo urgente agora?
+    maps_to_fact: collection_or_repossession
+sufficiency_criteria:
+  - Tipo de vendedor identificado
+  - Data aproximada da compra
+  - Irregularidade principal descrita
+ambiguity_signals:
+  - Divergência entre valores relatados
+  - Incerteza sobre leilão
+  - Múltiplos problemas sem priorização
+risk_signals:
+  - imminent_deadline
+  - fraud_or_scam
+  - loss_of_home
+handoff_conditions:
+  - Risco imediato de busca e apreensão
+  - Pedido explícito de humano
+  - Máximo de perguntas atingido
+  - Fraude aparente com dados sensíveis
+mentionable_documents:
+  - Contrato de compra e venda
+  - Contrato de financiamento
+  - Laudo ou relatório de histórico veicular
+  - Comprovantes de pagamento
+policy_warnings:
+  - Não concluir direito à indenização ou rescisão
+  - Prazos consumeristas mutáveis exigem análise humana
+  - "requires_human_analysis: consumer_deadlines_and_remedies"
+  - Não solicitar dados bancários completos

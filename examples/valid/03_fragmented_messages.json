@@ -1,0 +1,33 @@
+{
+  "note": "Fragmentos preservados com IDs distintos; não concatenar eliminando ordem",
+  "request": {
+    "conversation_id": "conv-001",
+    "event_id": "evt-001",
+    "known_facts": [],
+    "lead_id": "lead-001",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "ele contribuiu acho que 2 anos"
+      },
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:12-03:00",
+        "direction": "inbound",
+        "message_id": "m2",
+        "reply_to_message_id": "m1",
+        "role": "lead",
+        "text": "a 3"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-demo",
+    "triage_state": "pending_classification"
+  }
+}

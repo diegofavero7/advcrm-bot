@@ -1,0 +1,40 @@
+id: generic_civil
+version: "1.0.0"
+area: civil
+subject: null
+title: Civil — playbook genérico
+description: Triagem genérica civil sem parecer sobre mérito.
+priority_area: true
+max_questions: 3
+minimum_facts:
+  - key: civil_issue
+    description: Situação civil relatada
+optional_facts:
+  - key: opposing_party_type
+    description: Tipo de contraparte
+  - key: existing_case
+    description: Processo já existente
+allowed_questions:
+  - id: q_issue
+    text: Qual situação civil você precisa tratar?
+    maps_to_fact: civil_issue
+  - id: q_case
+    text: Já existe processo ou cobrança em andamento?
+    maps_to_fact: existing_case
+sufficiency_criteria:
+  - Situação civil mínima identificada
+ambiguity_signals:
+  - Mistura com consumidor ou trabalhista
+risk_signals:
+  - imminent_deadline
+  - loss_of_home
+handoff_conditions:
+  - Baixa confiança
+  - Pedido de humano
+  - Cliente existente pedindo andamento
+mentionable_documents:
+  - Contratos
+  - Notificações
+policy_warnings:
+  - Não concluir responsabilidade civil
+  - "requires_human_analysis: civil_liability"

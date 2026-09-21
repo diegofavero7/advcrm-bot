@@ -1,0 +1,17 @@
+{
+  "action": "route_lead",
+  "handoff_reason": null,
+  "missing_information": [
+    "approximate_prison_date"
+  ],
+  "policy_flags": [
+    "win_probability"
+  ],
+  "priority": "normal",
+  "proposed_question": null,
+  "requires_human_handoff": false,
+  "schema_version": "triage_next_step.v1",
+  "selected_missing_information": [
+    "approximate_prison_date"
+  ]
+}

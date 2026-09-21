@@ -1,0 +1,41 @@
+id: generic_consumer
+version: "1.0.0"
+area: consumer
+subject: null
+title: Consumidor — playbook genérico
+description: Triagem genérica de relações de consumo.
+priority_area: true
+max_questions: 3
+minimum_facts:
+  - key: consumer_issue
+    description: Problema de consumo relatado
+optional_facts:
+  - key: supplier_type
+    description: Tipo de fornecedor
+  - key: prior_complaint
+    description: Reclamação prévia
+allowed_questions:
+  - id: q_issue
+    text: Qual foi o problema com o produto ou serviço?
+    maps_to_fact: consumer_issue
+  - id: q_when
+    text: Quando isso aconteceu, aproximadamente?
+    maps_to_fact: event_date
+sufficiency_criteria:
+  - Problema de consumo descrito de forma mínima
+ambiguity_signals:
+  - Produto/serviço não identificado
+  - Mistura com matéria não consumerista
+risk_signals:
+  - fraud_or_scam
+  - imminent_deadline
+handoff_conditions:
+  - Baixa confiança
+  - Pedido de humano
+  - Risco imediato
+mentionable_documents:
+  - Nota fiscal ou comprovante
+  - Contrato de prestação
+policy_warnings:
+  - Não concluir direito à indenização
+  - "requires_human_analysis: consumer_remedies"
