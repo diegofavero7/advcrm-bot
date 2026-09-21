@@ -1,0 +1,28 @@
+{
+  "acceptable_actions": [
+    "human_handoff",
+    "request_human_review"
+  ],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "family"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "domestic_violence"
+  ],
+  "case_id": "family_violence",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": true,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": [
+    "domestic_violence",
+    "violence_or_threat"
+  ]
+}

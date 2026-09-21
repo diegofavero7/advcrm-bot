@@ -29,6 +29,4 @@ coverage.xml
 .DS_Store
 Thumbs.db
 
-# Local artifacts (generated schemas are committed; temp dirs are not)
-/tmp/
-*.log
+artifacts/evaluations/

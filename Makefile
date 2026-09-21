@@ -1,4 +1,4 @@
-.PHONY: install lint format typecheck test schemas check run
+.PHONY: install lint format typecheck test schemas check run eval-offline
 
 PYTHON ?= .venv/bin/python
 PIP ?= .venv/bin/pip
@@ -25,6 +25,10 @@ test:
 
 schemas:
 	$(PYTHON) scripts/export_json_schemas.py
+
+eval-offline:
+	$(PYTHON) scripts/generate_eval_cases.py
+	$(PYTHON) -m evaluations.runner
 
 check: format-check lint typecheck test schemas
 

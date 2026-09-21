@@ -1,0 +1,24 @@
+{
+  "case_id": "cons_financing",
+  "request": {
+    "conversation_id": "conv-cons_financing",
+    "event_id": "eval-cons_financing",
+    "known_facts": [],
+    "lead_id": "lead-cons_financing",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "O valor do financiamento do veículo veio diferente do combinado"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

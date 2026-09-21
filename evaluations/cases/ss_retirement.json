@@ -1,0 +1,24 @@
+{
+  "case_id": "ss_retirement",
+  "request": {
+    "conversation_id": "conv-ss_retirement",
+    "event_id": "eval-ss_retirement",
+    "known_facts": [],
+    "lead_id": "lead-ss_retirement",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Quero pedir aposentadoria por tempo de contribuição"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

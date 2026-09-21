@@ -1,0 +1,22 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "existing_client_other_request",
+    "existing_client_case_status"
+  ],
+  "acceptable_primary_areas": [
+    "undetermined",
+    "other"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [],
+  "case_id": "existing_client",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": true,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

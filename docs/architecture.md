@@ -1,39 +1,27 @@
-# Arquitetura — AdvCRM Bot (Fase 1)
+# Arquitetura — AdvCRM Bot
 
-## Papel no ecossistema
-
-O `advcrm-bot` é um orquestrador de triagem. Ele recebe contexto **já autorizado** pelo AdvCRM, interpreta conversas com contratos estruturados e devolve **decisões propostas**. Não acessa o PostgreSQL do CRM e não envia mensagens pelo Evolution GO.
+## Fase 1.1
 
 ```mermaid
-flowchart LR
-  EvolutionGO[Evolution GO] --> AdvCRM
-  AdvCRM --> AdvCRMBot[AdvCRM Bot]
-  AdvCRMBot -.->|"futuro"| AdvCRMAI[AdvCRM AI]
-  AdvCRMBot --> Proposed[Decisao proposta]
-  Proposed --> AdvCRM
+flowchart TD
+  Request["TriageAnalysisRequest"] --> Context["ContextBuilder"]
+  Context --> UPrompt["Prompt understanding"]
+  UPrompt --> AI["AiRuntimeClient"]
+  AI --> UVal["Pydantic + invariantes"]
+  UVal --> Playbook["resolve_playbook"]
+  Playbook --> NPrompt["Prompt next step"]
+  NPrompt --> AI
+  AI --> NVal["Pydantic + políticas"]
+  NVal --> Proposal["TriageProposal"]
 ```
 
-## Camadas
+- Cliente: [`app/clients/ai_runtime.py`](../app/clients/ai_runtime.py)
+- Serviços: [`app/application/services.py`](../app/application/services.py)
+- Proposta: [`app/schemas/proposal.py`](../app/schemas/proposal.py)
+- Prompts: [`app/prompts/`](../app/prompts/)
 
-| Camada | Responsabilidade |
-|---|---|
-| `app/api` | HTTP mínimo (health, ready, metrics, validate) |
-| `app/application` | Validação local; Protocols futuros (`AdvCrmAiClient`, `AdvCrmDecisionSink`) |
-| `app/domain` | Enums, FSM, invariantes |
-| `app/schemas` | Contratos Pydantic estritos |
-| `app/taxonomy` | Catálogo YAML área → assunto → subassuntos |
-| `app/playbooks` | 9 playbooks YAML (`yaml.safe_load`) |
-| `app/policies` | Funções puras; limiares em Settings |
-| `app/observability` | Prometheus; logs por IDs |
+Falha técnica → `safe_fallback` determinístico (revisão interna), sem `TriageNextStep` artificial.
 
-## Princípios
+## Autoridade
 
-1. IA produz decisões estruturadas; AdvCRM executa.
-2. Fail-closed em contratos inválidos.
-3. Sem mérito jurídico conclusivo.
-4. Estado oficial pertence ao AdvCRM; a FSM local só valida transições.
-5. YAML sempre via `yaml.safe_load`.
-
-## Fora de escopo (Fase 1)
-
-Integração HTTP com `advcrm-ai`, filas, banco, auth definitiva, UI, documentos/áudio reais, envio de mensagens.
+AdvCRM executa. Bot propõe. Sem WhatsApp/CRM write nesta fase.

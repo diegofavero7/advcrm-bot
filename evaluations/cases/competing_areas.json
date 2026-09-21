@@ -1,0 +1,24 @@
+{
+  "case_id": "competing_areas",
+  "request": {
+    "conversation_id": "conv-competing_areas",
+    "event_id": "eval-competing_areas",
+    "known_facts": [],
+    "lead_id": "lead-competing_areas",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Fui demitido e também quero revisar meu benefício do INSS por acidente"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

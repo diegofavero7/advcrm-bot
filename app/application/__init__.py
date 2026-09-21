@@ -1,4 +1,4 @@
-"""Camada de aplicação — validação local sem I/O externo."""
+"""Camada de aplicação — validação, readiness e pipeline."""
 
 from __future__ import annotations
 
@@ -6,9 +6,16 @@ from typing import Protocol
 
 from pydantic import ValidationError
 
+from app.clients.errors import AiRuntimeError
+from app.clients.schemas import verify_all_ai_schemas
+from app.clients.types import StructuredCompletionResult
 from app.config import Settings, get_settings
 from app.observability import CONTRACT_VALIDATIONS, get_logger
 from app.playbooks import get_playbooks, load_all_playbooks
+from app.prompts import (
+    load_lead_understanding_prompt,
+    load_triage_next_step_prompt,
+)
 from app.schemas.inbound import TriageAnalysisRequest
 from app.schemas.lead_understanding import LeadUnderstanding
 from app.schemas.triage_next_step import TriageNextStep
@@ -18,18 +25,20 @@ logger = get_logger("app.application")
 
 
 class AdvCrmAiClient(Protocol):
-    """Integração futura com advcrm-ai — não implementar HTTP nesta fase."""
+    """Cliente estruturado do AdvCRM AI."""
 
-    async def classify(
+    async def complete_structured(
         self,
-        request: TriageAnalysisRequest,
         *,
+        schema_name: str,
         json_schema: dict[str, object],
-    ) -> LeadUnderstanding: ...
+        messages: list[dict[str, str]],
+        contract_label: str,
+    ) -> StructuredCompletionResult: ...
 
 
 class AdvCrmDecisionSink(Protocol):
-    """Devolução futura da decisão ao AdvCRM — não implementar nesta fase."""
+    """Devolução futura da decisão ao AdvCRM — fora do escopo da Fase 1.1."""
 
     async def submit_decision(
         self,
@@ -42,11 +51,11 @@ class AdvCrmDecisionSink(Protocol):
 
 
 class ReadinessError(Exception):
-    """Falha de readiness (config/taxonomia/playbooks)."""
+    """Falha de readiness (config/taxonomia/playbooks/schemas/runtime)."""
 
 
 def check_readiness(settings: Settings | None = None) -> None:
-    """Valida configuração, taxonomia e playbooks. Levanta ReadinessError se falhar."""
+    """Valida aplicação. Runtime só se AI_RUNTIME_REQUIRED=true (+ HEALTH_PATH)."""
     cfg = settings or get_settings()
     try:
         if not (0.0 <= cfg.confidence_medium_threshold <= cfg.confidence_high_threshold <= 1.0):
@@ -57,16 +66,36 @@ def check_readiness(settings: Settings | None = None) -> None:
                 f"Versão de taxonomia esperada {cfg.taxonomy_version}, "
                 f"encontrada {taxonomy.taxonomy_version}"
             )
-        # Popula cache
         get_taxonomy()
         playbooks = load_all_playbooks()
         if len(playbooks) != 9:
             raise ReadinessError(f"Esperados 9 playbooks, obtidos {len(playbooks)}")
         get_playbooks()
+        verify_all_ai_schemas()
+        load_lead_understanding_prompt()
+        load_triage_next_step_prompt()
     except ReadinessError:
         raise
     except Exception as exc:
         raise ReadinessError(str(exc)) from exc
+
+
+async def check_runtime_readiness(settings: Settings | None = None) -> None:
+    """Consulta health do runtime quando required=true."""
+    cfg = settings or get_settings()
+    if not cfg.ai_runtime_required:
+        return
+    if not cfg.ai_runtime_health_path:
+        raise ReadinessError("AI_RUNTIME_HEALTH_PATH obrigatório com REQUIRED=true")
+    from app.clients.ai_runtime import AiRuntimeClient
+
+    client = AiRuntimeClient(cfg)
+    try:
+        await client.health_check()
+    except AiRuntimeError as exc:
+        raise ReadinessError(f"Runtime indisponível: {exc.category}") from exc
+    finally:
+        await client.aclose()
 
 
 def validate_lead_understanding(payload: dict[str, object]) -> LeadUnderstanding:

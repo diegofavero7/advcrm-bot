@@ -1,0 +1,22 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "criminal"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "police_inquiry"
+  ],
+  "case_id": "crim_inquiry",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

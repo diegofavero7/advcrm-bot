@@ -14,7 +14,11 @@ def test_fail_closed_rejects_invalid_contracts() -> None:
 def test_settings_do_not_embed_secrets() -> None:
     settings = Settings()
     dumped = settings.model_dump()
-    for key in dumped:
-        assert "password" not in key.lower()
-        assert "secret" not in key.lower()
-        assert "token" not in key.lower()
+    # Nomes de campos técnicos (ex. max_tokens) são ok; valores secretos não.
+    assert dumped.get("ai_runtime_api_key") in (None, "")
+    for key, value in dumped.items():
+        if key in {"ai_runtime_api_key"}:
+            continue
+        if isinstance(value, str):
+            assert "sk-" not in value.lower()
+            assert "password" not in value.lower()

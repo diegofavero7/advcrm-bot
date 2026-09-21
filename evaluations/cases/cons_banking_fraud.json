@@ -1,0 +1,24 @@
+{
+  "case_id": "cons_banking_fraud",
+  "request": {
+    "conversation_id": "conv-cons_banking_fraud",
+    "event_id": "eval-cons_banking_fraud",
+    "known_facts": [],
+    "lead_id": "lead-cons_banking_fraud",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Fizeram um empréstimo no meu nome sem eu autorizar"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

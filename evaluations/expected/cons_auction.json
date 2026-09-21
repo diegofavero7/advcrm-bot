@@ -1,0 +1,23 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "consumer"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "undisclosed_auction_history",
+    "vehicle_purchase_irregularities"
+  ],
+  "case_id": "cons_auction",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

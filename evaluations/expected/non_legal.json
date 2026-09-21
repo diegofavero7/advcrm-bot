@@ -1,0 +1,21 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "non_legal_contact"
+  ],
+  "acceptable_primary_areas": [
+    "other",
+    "undetermined"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [],
+  "case_id": "non_legal",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

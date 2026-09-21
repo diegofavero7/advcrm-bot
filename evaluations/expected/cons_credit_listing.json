@@ -1,0 +1,22 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "consumer"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "wrongful_credit_listing"
+  ],
+  "case_id": "cons_credit_listing",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

@@ -1,0 +1,25 @@
+{
+  "acceptable_actions": [
+    "request_human_review",
+    "wait_for_more_messages"
+  ],
+  "acceptable_intents": [
+    "undetermined",
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "undetermined",
+    "other"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [],
+  "case_id": "audio_only",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

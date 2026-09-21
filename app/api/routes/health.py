@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Response, status
 from fastapi.responses import JSONResponse
 
-from app.application import ReadinessError, check_readiness
+from app.application import ReadinessError, check_readiness, check_runtime_readiness
 from app.config import get_settings
 from app.observability import READY_CHECKS, metrics_payload
 
@@ -18,9 +18,10 @@ def health() -> dict[str, str]:
 
 
 @router.get("/ready")
-def ready() -> JSONResponse:
+async def ready() -> JSONResponse:
     try:
         check_readiness()
+        await check_runtime_readiness()
         READY_CHECKS.labels(result="ok").inc()
         return JSONResponse(
             status_code=status.HTTP_200_OK,

@@ -1,0 +1,22 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "social_security"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "bpc_loas"
+  ],
+  "case_id": "ss_bpc_loas",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

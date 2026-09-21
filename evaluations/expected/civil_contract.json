@@ -1,0 +1,22 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "civil"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "contract_breach"
+  ],
+  "case_id": "civil_contract",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}

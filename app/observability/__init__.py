@@ -5,7 +5,13 @@ from __future__ import annotations
 import logging
 from typing import Final
 
-from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Counter, generate_latest
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    CollectorRegistry,
+    Counter,
+    Histogram,
+    generate_latest,
+)
 
 REGISTRY: Final[CollectorRegistry] = CollectorRegistry()
 
@@ -20,6 +26,42 @@ READY_CHECKS = Counter(
     "advcrm_bot_ready_checks_total",
     "Checagens de readiness",
     labelnames=("result",),
+    registry=REGISTRY,
+)
+
+AI_CALLS = Counter(
+    "advcrm_bot_ai_calls_total",
+    "Chamadas ao runtime AI",
+    labelnames=("contract", "result"),
+    registry=REGISTRY,
+)
+
+AI_FAILURES = Counter(
+    "advcrm_bot_ai_failures_total",
+    "Falhas do runtime por categoria",
+    labelnames=("contract", "category"),
+    registry=REGISTRY,
+)
+
+AI_RETRIES = Counter(
+    "advcrm_bot_ai_retries_total",
+    "Retries adicionais ao runtime",
+    labelnames=("contract",),
+    registry=REGISTRY,
+)
+
+AI_LATENCY = Histogram(
+    "advcrm_bot_ai_latency_ms",
+    "Latência das chamadas ao runtime em ms",
+    labelnames=("contract",),
+    buckets=(50, 100, 250, 500, 1000, 2500, 5000, 15000, 60000),
+    registry=REGISTRY,
+)
+
+FAIL_CLOSED = Counter(
+    "advcrm_bot_fail_closed_total",
+    "Resultados fail-closed do pipeline",
+    labelnames=("stage", "category"),
     registry=REGISTRY,
 )
 

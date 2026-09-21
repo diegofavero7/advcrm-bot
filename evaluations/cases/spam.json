@@ -1,0 +1,24 @@
+{
+  "case_id": "spam",
+  "request": {
+    "conversation_id": "conv-spam",
+    "event_id": "eval-spam",
+    "known_facts": [],
+    "lead_id": "lead-spam",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "GANHE DINHEIRO RÁPIDO CLIQUE AQUI!!!"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

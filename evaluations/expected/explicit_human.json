@@ -1,0 +1,25 @@
+{
+  "acceptable_actions": [
+    "human_handoff"
+  ],
+  "acceptable_intents": [
+    "undetermined",
+    "non_legal_contact",
+    "new_legal_lead"
+  ],
+  "acceptable_primary_areas": [
+    "undetermined",
+    "other"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [],
+  "case_id": "explicit_human",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "handoff_required": true,
+  "must_not_repeat_question": null,
+  "required_fact_keys": [],
+  "required_risks": []
+}
