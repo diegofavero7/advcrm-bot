@@ -1,0 +1,190 @@
+{
+  "$defs": {
+    "ExplicitCueState": {
+      "description": "Estado de um cue explícito — ausência de informação ≠ negação.",
+      "enum": [
+        "present",
+        "not_informed"
+      ],
+      "title": "ExplicitCueState",
+      "type": "string"
+    },
+    "ExplicitSafetyCue": {
+      "additionalProperties": false,
+      "description": "Pedido urgente de ajuda ou indicação de perigo imediato — evidência própria.",
+      "properties": {
+        "evidence_quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Quote"
+        },
+        "evidence_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Summary"
+        },
+        "related_occurrence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Related Occurrence Ids",
+          "type": "array"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Message Ids",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/ExplicitCueState"
+        }
+      },
+      "required": [
+        "evidence_quote",
+        "evidence_summary",
+        "related_occurrence_ids",
+        "source_message_ids",
+        "state"
+      ],
+      "title": "ExplicitSafetyCue",
+      "type": "object"
+    },
+    "RiskAssertion": {
+      "description": "Como o lead enquadra o risco.",
+      "enum": [
+        "affirmed",
+        "denied",
+        "hypothetical"
+      ],
+      "title": "RiskAssertion",
+      "type": "string"
+    },
+    "RiskFlag": {
+      "enum": [
+        "violence_or_threat",
+        "arrest_or_detention",
+        "domestic_violence",
+        "child_or_vulnerable_person",
+        "imminent_deadline",
+        "loss_of_home",
+        "medical_emergency",
+        "self_harm",
+        "sensitive_personal_data",
+        "fraud_or_scam",
+        "other"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    },
+    "SafetyOccurrence": {
+      "additionalProperties": false,
+      "description": "Uma ocorrência distinta de risco (pessoas/eventos/tempos não fundidos).",
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/RiskAssertion"
+        },
+        "evidence_quote": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Evidence Quote",
+          "type": "string"
+        },
+        "evidence_summary": {
+          "maxLength": 400,
+          "minLength": 1,
+          "title": "Evidence Summary",
+          "type": "string"
+        },
+        "occurrence_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Occurrence Id",
+          "type": "string"
+        },
+        "risk": {
+          "$ref": "#/$defs/RiskFlag"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Message Ids",
+          "type": "array"
+        },
+        "temporal_context": {
+          "$ref": "#/$defs/TemporalContext"
+        }
+      },
+      "required": [
+        "assertion",
+        "evidence_quote",
+        "evidence_summary",
+        "occurrence_id",
+        "risk",
+        "source_message_ids",
+        "temporal_context"
+      ],
+      "title": "SafetyOccurrence",
+      "type": "object"
+    },
+    "TemporalContext": {
+      "description": "Contexto temporal declarado (ou ausência de informação).",
+      "enum": [
+        "ongoing",
+        "near_future",
+        "historical",
+        "unknown"
+      ],
+      "title": "TemporalContext",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Saída do extrator v2 — descreve conteúdo; não escolhe ação/handoff.",
+  "properties": {
+    "immediate_danger": {
+      "$ref": "#/$defs/ExplicitSafetyCue"
+    },
+    "occurrences": {
+      "items": {
+        "$ref": "#/$defs/SafetyOccurrence"
+      },
+      "title": "Occurrences",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "safety_signals.v2",
+      "default": "safety_signals.v2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "urgent_help_request": {
+      "$ref": "#/$defs/ExplicitSafetyCue"
+    }
+  },
+  "required": [
+    "immediate_danger",
+    "occurrences",
+    "schema_version",
+    "urgent_help_request"
+  ],
+  "title": "SafetySignalsV2",
+  "type": "object"
+}

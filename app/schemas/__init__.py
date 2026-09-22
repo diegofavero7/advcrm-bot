@@ -6,10 +6,13 @@ from typing import Any
 
 from app.schemas.inbound import TriageAnalysisRequest
 from app.schemas.lead_understanding import LeadUnderstanding
+from app.schemas.safety_signals import SafetySignals, SafetySignalsV2
 from app.schemas.triage_next_step import TriageNextStep
 
 __all__ = [
     "LeadUnderstanding",
+    "SafetySignals",
+    "SafetySignalsV2",
     "TriageAnalysisRequest",
     "TriageNextStep",
     "build_strict_json_schema",

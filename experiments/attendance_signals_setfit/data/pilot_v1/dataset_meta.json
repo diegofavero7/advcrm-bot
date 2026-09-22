@@ -1,0 +1,18 @@
+{
+  "dataset_id": "attendance_signals_pilot.v1",
+  "kind": "synthetic_pilot",
+  "language": "pt-BR",
+  "description": "Conjunto sintético piloto e revisável para sinais de atendimento. NÃO usar evaluations/cases nem compare reserved.",
+  "forbidden_sources": [
+    "evaluations/cases",
+    "evaluations/expected",
+    "evaluations/compare",
+    "artifacts/evaluations"
+  ],
+  "label_semantics": {
+    "true": "sinal presente no conteúdo da conversa",
+    "false": "sinal ausente (negativo anotado)",
+    "null": "ambíguo — excluído do treino/métricas binárias daquele sinal"
+  },
+  "n_examples_target": "pequeno e revisável (piloto)"
+}

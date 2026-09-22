@@ -4,19 +4,39 @@
     "new_legal_lead",
     "undetermined"
   ],
+  "acceptable_policy_rules": [],
   "acceptable_primary_areas": [
     "social_security",
     "undetermined"
   ],
   "acceptable_secondary_areas": [],
   "acceptable_subjects": [],
+  "annotation_rationale": "O texto de m2 corrige m1, mas o contrato v1 não representa correção: reply_to é contexto de resposta, não sinal de substituição. O prompt exige UM fato por alvo, então o acerto é emitir só 5. Emitir 5 e 2 deixa a chave NÃO resolvida e é falha — achar 5 entre valores conflitantes não é sucesso.",
   "case_id": "correction_later",
+  "critical_expectations": [
+    "fact_values"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
-    "eligibility_confirmed"
+    "eligibility_confirmed",
+    "employment_duration"
   ],
+  "forbidden_fact_values": {
+    "contributed_years": [
+      "2"
+    ]
+  },
+  "forbidden_risks": [],
   "handoff_required": null,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {
+    "contributed_years": [
+      "5"
+    ]
+  },
+  "required_risks": [],
+  "risks_exhaustive": false
 }

@@ -1,0 +1,37 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead",
+    "undetermined"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "social_security",
+    "undetermined",
+    "family"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "undetermined",
+    "other",
+    "benefit_review"
+  ],
+  "annotation_rationale": "Duas pessoas distintas; reply_to não é correção. Não colapsar em um único valor vigente. Sem chave canônica obrigatória — diagnóstico de não substituição indevida.",
+  "case_id": "cmp_different_people",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

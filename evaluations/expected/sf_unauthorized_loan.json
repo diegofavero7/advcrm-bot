@@ -1,0 +1,38 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "consumer",
+    "civil"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "banking_fraud",
+    "other"
+  ],
+  "annotation_rationale": "Contraste: contratação explicitamente não autorizada sustenta fraud_or_scam.",
+  "case_id": "sf_unauthorized_loan",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_extractor_risks": [
+    "fraud_or_scam"
+  ],
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [
+    "fraud_or_scam"
+  ],
+  "risks_exhaustive": false
+}

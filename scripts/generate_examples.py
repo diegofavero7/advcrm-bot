@@ -64,9 +64,12 @@ def understanding(**overrides: object) -> dict:
         "primary_area": "social_security",
         "secondary_area": None,
         "subject": "prison_allowance",
-        "subsubjects": ["spouse_relationship"],
+        "subsubjects": ["spouse_relationship", "child_dependent"],
         "confidence": 0.91,
-        "reasoning_summary": "Relata prisão do cônjuge e solicita auxílio-reclusão",
+        "reasoning_summary": (
+            "Relata prisão do marido, pede auxílio-reclusão; "
+            "menciona emprego registrado e filho menor"
+        ),
         "participants": [
             {"role": "contact_person", "relationship": "spouse"},
             {"role": "affected_person", "relationship": "detainee"},
@@ -75,7 +78,14 @@ def understanding(**overrides: object) -> dict:
         "case_facts": [
             {
                 "key": "relationship_to_detainee",
-                "value": "cônjuge",
+                "value": "cônjuge (marido)",
+                "certainty": "explicit",
+                "source_message_ids": ["m1"],
+                "from_trusted_crm_context": False,
+            },
+            {
+                "key": "detainee_imprisoned",
+                "value": "marido foi preso",
                 "certainty": "explicit",
                 "source_message_ids": ["m1"],
                 "from_trusted_crm_context": False,
@@ -87,16 +97,24 @@ def understanding(**overrides: object) -> dict:
                 "source_message_ids": ["m2"],
                 "from_trusted_crm_context": False,
             },
+            {
+                "key": "minor_child_dependent",
+                "value": "filho menor",
+                "certainty": "explicit",
+                "source_message_ids": ["m2"],
+                "from_trusted_crm_context": False,
+            },
         ],
         "procedural_situation": {
             "stage": None,
             "prior_request": None,
             "prior_denial": None,
-            "existing_case": False,
+            # null = desconhecimento (não use false como “não informado”)
+            "existing_case": None,
             "prior_attempts": None,
         },
-        "mentioned_documents": [{"label": "carteira de trabalho", "availability": "available"}],
-        "documents_availability": "partial",
+        "mentioned_documents": [],
+        "documents_availability": "unknown",
         "ambiguity": {
             "present": False,
             "reason": None,
@@ -107,7 +125,9 @@ def understanding(**overrides: object) -> dict:
         "urgency": "normal",
         "safety": {
             "level": "normal",
-            "reason": "Sem risco imediato adicional além da prisão já informada",
+            "reason": (
+                "Prisão relatada e dependente menor; sem ameaça ou urgência imediata adicionais"
+            ),
             "detected_risks": ["arrest_or_detention", "child_or_vulnerable_person"],
             "recommend_handoff": False,
         },

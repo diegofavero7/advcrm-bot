@@ -1,0 +1,24 @@
+{
+  "case_id": "cmp_generic_lawyer",
+  "request": {
+    "conversation_id": "conv-cmp_generic_lawyer",
+    "event_id": "cmp-cmp_generic_lawyer",
+    "known_facts": [],
+    "lead_id": "lead-cmp_generic_lawyer",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Preciso de um advogado para me orientar sobre um problema"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

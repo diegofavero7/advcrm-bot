@@ -6,6 +6,9 @@
   "acceptable_intents": [
     "new_legal_lead"
   ],
+  "acceptable_policy_rules": [
+    "flagrant_arrest_requires_handoff"
+  ],
   "acceptable_primary_areas": [
     "criminal"
   ],
@@ -13,15 +16,27 @@
   "acceptable_subjects": [
     "flagrant_arrest"
   ],
+  "annotation_rationale": "Flagrante resolve por subject estruturado, não pela nova regra de violência doméstica.",
   "case_id": "crim_flagrant",
+  "critical_expectations": [
+    "action",
+    "handoff",
+    "policy_rule"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
     "eligibility_confirmed"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": true,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": true,
   "required_fact_keys": [],
+  "required_fact_values": {},
   "required_risks": [
     "arrest_or_detention"
-  ]
+  ],
+  "risks_exhaustive": false
 }

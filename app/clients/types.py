@@ -8,9 +8,9 @@ from app.domain.models import StrictModel
 
 
 class TokenUsage(StrictModel):
-    prompt_tokens: int | None
-    completion_tokens: int | None
-    total_tokens: int | None
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
 
 
 class StructuredCompletionResult(StrictModel):

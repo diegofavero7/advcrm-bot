@@ -14,6 +14,7 @@ from app.observability import CONTRACT_VALIDATIONS, get_logger
 from app.playbooks import get_playbooks, load_all_playbooks
 from app.prompts import (
     load_lead_understanding_prompt,
+    load_safety_signals_prompt,
     load_triage_next_step_prompt,
 )
 from app.schemas.inbound import TriageAnalysisRequest
@@ -34,6 +35,7 @@ class AdvCrmAiClient(Protocol):
         json_schema: dict[str, object],
         messages: list[dict[str, str]],
         contract_label: str,
+        organization_id: str | None = None,
     ) -> StructuredCompletionResult: ...
 
 
@@ -55,7 +57,7 @@ class ReadinessError(Exception):
 
 
 def check_readiness(settings: Settings | None = None) -> None:
-    """Valida aplicação. Runtime só se AI_RUNTIME_REQUIRED=true (+ HEALTH_PATH)."""
+    """Valida aplicação. Runtime só se AI_RUNTIME_REQUIRED=true (+ READY_PATH)."""
     cfg = settings or get_settings()
     try:
         if not (0.0 <= cfg.confidence_medium_threshold <= cfg.confidence_high_threshold <= 1.0):
@@ -74,6 +76,7 @@ def check_readiness(settings: Settings | None = None) -> None:
         verify_all_ai_schemas()
         load_lead_understanding_prompt()
         load_triage_next_step_prompt()
+        load_safety_signals_prompt()
     except ReadinessError:
         raise
     except Exception as exc:
@@ -81,17 +84,21 @@ def check_readiness(settings: Settings | None = None) -> None:
 
 
 async def check_runtime_readiness(settings: Settings | None = None) -> None:
-    """Consulta health do runtime quando required=true."""
+    """Consulta /ready do runtime quando required=true (sem inferência no bot).
+
+    A garantia oferecida por /ready depende da configuração do AdvCRM AI
+    (token S2S no processo + health de inferência somente se INFERENCE_ENABLED).
+    """
     cfg = settings or get_settings()
     if not cfg.ai_runtime_required:
         return
-    if not cfg.ai_runtime_health_path:
-        raise ReadinessError("AI_RUNTIME_HEALTH_PATH obrigatório com REQUIRED=true")
+    if not cfg.ai_runtime_ready_path:
+        raise ReadinessError("AI_RUNTIME_READY_PATH obrigatório com REQUIRED=true")
     from app.clients.ai_runtime import AiRuntimeClient
 
     client = AiRuntimeClient(cfg)
     try:
-        await client.health_check()
+        await client.ready_check()
     except AiRuntimeError as exc:
         raise ReadinessError(f"Runtime indisponível: {exc.category}") from exc
     finally:

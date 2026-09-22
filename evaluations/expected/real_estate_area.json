@@ -3,6 +3,7 @@
   "acceptable_intents": [
     "new_legal_lead"
   ],
+  "acceptable_policy_rules": [],
   "acceptable_primary_areas": [
     "real_estate"
   ],
@@ -11,13 +12,21 @@
     "purchase_sale",
     "other"
   ],
+  "annotation_rationale": null,
   "case_id": "real_estate_area",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
     "eligibility_confirmed"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": null,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
 }

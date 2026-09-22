@@ -19,6 +19,7 @@ from app.application.services import (
     TriagePipelineService,
 )
 from app.clients.ai_runtime import AiRuntimeClient
+from app.clients.errors import AiRuntimeError, AiRuntimeSchemaValidationError
 from app.clients.schemas import (
     SCHEMA_NAME_LEAD,
     SCHEMA_NAME_NEXT_STEP,
@@ -29,7 +30,8 @@ from app.config import clear_settings_cache, get_settings
 from app.playbooks import resolve_playbook
 from app.prompts import load_lead_understanding_prompt, load_triage_next_step_prompt
 from app.schemas.inbound import TriageAnalysisRequest
-from app.schemas.proposal import NextStepOnlyEnvelope, ProposalStatus
+from app.schemas.proposal import NextStepOnlyEnvelope, ProposalStatus, SafeFallback
+from app.taxonomy import get_taxonomy
 
 EXIT_OK = 0
 EXIT_CONFIG = 2
@@ -58,6 +60,55 @@ def _write_output(path: Path | None, payload: dict[str, Any]) -> None:
         path.write_text(text, encoding="utf-8")
 
 
+def _failure_payload(
+    *,
+    stage: str,
+    exc: AiRuntimeError,
+    event_id: str | None = None,
+) -> dict[str, Any]:
+    details = getattr(exc, "details", None)
+    error: dict[str, Any] = {
+        "category": exc.category,
+        "message": exc.message,
+        "stage": stage,
+    }
+    if isinstance(details, list):
+        error["details"] = details
+    if exc.http_status is not None:
+        error["http_status"] = exc.http_status
+    if exc.request_id is not None:
+        error["request_id"] = exc.request_id
+    if exc.retry_count is not None:
+        error["retry_count"] = exc.retry_count
+    if exc.latency_ms is not None:
+        error["latency_ms"] = exc.latency_ms
+    # rejeitado/payload bruto nunca no dump operacional
+    payload: dict[str, Any] = {
+        "status": ProposalStatus.FAILED_CLOSED.value,
+        "lead_understanding": None,
+        "triage_next_step": None,
+        "safe_fallback": SafeFallback(
+            reason_category=exc.category,
+            message=exc.message,
+        ).model_dump(mode="json"),
+        "error": error,
+    }
+    if event_id is not None:
+        payload["event_id"] = event_id
+    return payload
+
+
+def _print_runtime_failure(exc: AiRuntimeError) -> None:
+    print(f"Falha: {type(exc).__name__} category={exc.category}", file=sys.stderr)
+    details = getattr(exc, "details", None)
+    if isinstance(details, list) and details:
+        print("Diagnóstico sanitizado (loc/type):", file=sys.stderr)
+        for item in details:
+            loc = item.get("loc", [])
+            err_type = item.get("type", "validation_error")
+            print(f"  - loc={loc} type={err_type}", file=sys.stderr)
+
+
 def _offline_understanding(request: TriageAnalysisRequest) -> dict[str, Any]:
     prompt = load_lead_understanding_prompt()
     schema = get_lead_understanding_schema()
@@ -67,13 +118,8 @@ def _offline_understanding(request: TriageAnalysisRequest) -> dict[str, Any]:
         {"role": "system", "content": prompt.text},
         {"role": "user", "content": context},
     ]
-    payload = client.build_chat_payload(
-        schema_name=SCHEMA_NAME_LEAD,
-        json_schema=schema,
-        messages=messages,
-        allow_missing_model=True,
-    )
-    # Remover schema enorme do dump offline resumido? manter para debug controlado
+    payload = client.build_structured_payload(json_schema=schema, messages=messages)
+
     return {
         "mode": "offline",
         "stage": "understanding",
@@ -82,8 +128,20 @@ def _offline_understanding(request: TriageAnalysisRequest) -> dict[str, Any]:
         "prompt_hash": prompt.sha256,
         "schema_name": SCHEMA_NAME_LEAD,
         "message_count": len(request.messages),
-        "payload_model": payload.get("model"),
-        "response_format": payload["response_format"],
+        "endpoint": get_settings().ai_runtime_structured_generation_path,
+        "taxonomy_version": get_taxonomy().taxonomy_version,
+        "payload": {
+            "messages": [
+                {"role": m["role"], "content_chars": len(m["content"])} for m in payload["messages"]
+            ],
+            "max_tokens": payload["max_tokens"],
+            "temperature": payload["temperature"],
+            "schema_keys": sorted(payload["schema"].keys()),
+            "has_model": "model" in payload,
+            "has_response_format": "response_format" in payload,
+            "user_content_has_taxonomy_catalog": "taxonomy_catalog"
+            in payload["messages"][1]["content"],
+        },
     }
 
 
@@ -108,12 +166,7 @@ def _offline_next_step(envelope: NextStepOnlyEnvelope) -> dict[str, Any]:
         {"role": "system", "content": prompt.text},
         {"role": "user", "content": context},
     ]
-    payload = client.build_chat_payload(
-        schema_name=SCHEMA_NAME_NEXT_STEP,
-        json_schema=schema,
-        messages=messages,
-        allow_missing_model=True,
-    )
+    payload = client.build_structured_payload(json_schema=schema, messages=messages)
     return {
         "mode": "offline",
         "stage": "next_step",
@@ -122,8 +175,17 @@ def _offline_next_step(envelope: NextStepOnlyEnvelope) -> dict[str, Any]:
         "prompt_hash": prompt.sha256,
         "playbook_id": playbook.id if playbook else None,
         "schema_name": SCHEMA_NAME_NEXT_STEP,
-        "payload_model": payload.get("model"),
-        "response_format": payload["response_format"],
+        "endpoint": get_settings().ai_runtime_structured_generation_path,
+        "payload": {
+            "messages": [
+                {"role": m["role"], "content_chars": len(m["content"])} for m in payload["messages"]
+            ],
+            "max_tokens": payload["max_tokens"],
+            "temperature": payload["temperature"],
+            "schema_keys": sorted(payload["schema"].keys()),
+            "has_model": "model" in payload,
+            "has_response_format": "response_format" in payload,
+        },
     }
 
 
@@ -133,21 +195,35 @@ async def _run_live(args: argparse.Namespace) -> int:
     if not settings.ai_runtime_enabled:
         print("AI_RUNTIME_ENABLED=false — use configuração adequada.", file=sys.stderr)
         return EXIT_CONFIG
-    if not settings.ai_runtime_model:
-        print("AI_RUNTIME_MODEL obrigatório para --live.", file=sys.stderr)
+    if not settings.ai_runtime_organization_id:
+        print(
+            "AI_RUNTIME_ORGANIZATION_ID obrigatório para --live "
+            "(UUID confiável; não use tenant_id sem mapeamento).",
+            file=sys.stderr,
+        )
         return EXIT_CONFIG
 
     data = _load_json(Path(args.input))
+    out_path = Path(args.output) if args.output else None
     async with AiRuntimeClient(settings) as client:
         if args.understanding_only:
             request = _extract_request(data)
-            understanding, comp, ver, sha = await LeadUnderstandingService(client, settings).run(
-                request
-            )
+            try:
+                understanding, comp, ver, sha = await LeadUnderstandingService(
+                    client, settings
+                ).run(request)
+            except AiRuntimeError as exc:
+                _print_runtime_failure(exc)
+                _write_output(
+                    out_path,
+                    _failure_payload(stage="understanding", exc=exc, event_id=request.event_id),
+                )
+                return EXIT_FAIL_CLOSED
             _write_output(
-                Path(args.output) if args.output else None,
+                out_path,
                 {
                     "status": "success",
+                    "event_id": request.event_id,
                     "lead_understanding": understanding.model_dump(mode="json"),
                     "metadata": {
                         "model": comp.model,
@@ -162,17 +238,32 @@ async def _run_live(args: argparse.Namespace) -> int:
 
         if args.next_step_only:
             envelope = NextStepOnlyEnvelope.model_validate(data)
-            next_step, comp, playbook, ver, sha = await TriageNextStepService(client, settings).run(
-                request=envelope.request,
-                understanding=envelope.lead_understanding,
-                questions_asked=envelope.questions_asked,
-                last_bot_question=envelope.last_bot_question,
-                missing_information=envelope.missing_information,
-            )
+            try:
+                next_step, comp, playbook, ver, sha = await TriageNextStepService(
+                    client, settings
+                ).run(
+                    request=envelope.request,
+                    understanding=envelope.lead_understanding,
+                    questions_asked=envelope.questions_asked,
+                    last_bot_question=envelope.last_bot_question,
+                    missing_information=envelope.missing_information,
+                )
+            except AiRuntimeError as exc:
+                _print_runtime_failure(exc)
+                _write_output(
+                    out_path,
+                    _failure_payload(
+                        stage="next_step",
+                        exc=exc,
+                        event_id=envelope.request.event_id,
+                    ),
+                )
+                return EXIT_FAIL_CLOSED
             _write_output(
-                Path(args.output) if args.output else None,
+                out_path,
                 {
                     "status": "success",
+                    "event_id": envelope.request.event_id,
                     "triage_next_step": next_step.model_dump(mode="json"),
                     "metadata": {
                         "model": comp.model,
@@ -188,11 +279,22 @@ async def _run_live(args: argparse.Namespace) -> int:
 
         request = _extract_request(data)
         proposal = await TriagePipelineService(client, settings).run(request)
-        _write_output(
-            Path(args.output) if args.output else None,
-            proposal.model_dump(mode="json"),
-        )
+        _write_output(out_path, proposal.model_dump(mode="json"))
         if proposal.status == ProposalStatus.FAILED_CLOSED:
+            if proposal.error is not None and proposal.error.details:
+                print(
+                    f"Falha: AiRuntimeError category={proposal.error.category}",
+                    file=sys.stderr,
+                )
+                print("Diagnóstico sanitizado (loc/type):", file=sys.stderr)
+                for item in proposal.error.details:
+                    print(
+                        f"  - loc={item.get('loc', [])} type={item.get('type')}",
+                        file=sys.stderr,
+                    )
+            return EXIT_FAIL_CLOSED
+        if proposal.status == ProposalStatus.DEGRADED_SAFETY:
+            # Understanding inválido; eventual handoff vem só do extrator.
             return EXIT_FAIL_CLOSED
         return EXIT_OK
 
@@ -289,6 +391,12 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"Erro de configuração/entrada: {exc}", file=sys.stderr)
         return EXIT_CONFIG
+    except AiRuntimeSchemaValidationError as exc:
+        _print_runtime_failure(exc)
+        return EXIT_FAIL_CLOSED
+    except AiRuntimeError as exc:
+        _print_runtime_failure(exc)
+        return EXIT_FAIL_CLOSED
     except Exception as exc:
         # Não vazar stack com dados sensíveis
         print(f"Falha: {type(exc).__name__}", file=sys.stderr)

@@ -1,0 +1,12 @@
+{
+  "case_id": "degraded_dv_urgent_help_handoff",
+  "rationale": "Understanding inválido + safety_signals.v2: DV afirmada + urgent_help_request presente relacionado à ocorrência. Expectativa: human_handoff sensitive_situation/high via degraded_safety.v2. Não altera expectations live de family_violence.",
+  "expected_pipeline_status": "degraded_safety",
+  "expected_understanding_valid": false,
+  "expected_safety_schema": "safety_signals.v2",
+  "expected_attendance_handoff": true,
+  "expected_handoff_reason": "sensitive_situation",
+  "expected_priority": "high",
+  "policy_version": "degraded_safety.v2",
+  "policy_rule_id": "degraded_safety_domestic_violence_urgent_help_requires_handoff"
+}

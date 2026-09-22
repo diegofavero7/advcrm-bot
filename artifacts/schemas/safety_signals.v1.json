@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "DetectedSafetyRisk": {
+      "additionalProperties": false,
+      "description": "Um risco categórico com evidência explícita nas mensagens do lead (v1).",
+      "properties": {
+        "evidence_summary": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Evidence Summary",
+          "type": "string"
+        },
+        "risk": {
+          "$ref": "#/$defs/RiskFlag"
+        },
+        "source_message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Message Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evidence_summary",
+        "risk",
+        "source_message_ids"
+      ],
+      "title": "DetectedSafetyRisk",
+      "type": "object"
+    },
+    "RiskFlag": {
+      "enum": [
+        "violence_or_threat",
+        "arrest_or_detention",
+        "domestic_violence",
+        "child_or_vulnerable_person",
+        "imminent_deadline",
+        "loss_of_home",
+        "medical_emergency",
+        "self_harm",
+        "sensitive_personal_data",
+        "fraud_or_scam",
+        "other"
+      ],
+      "title": "RiskFlag",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Saída do extrator v1 — não classifica área/subject/intent nem decide handoff.",
+  "properties": {
+    "detected_risks": {
+      "items": {
+        "$ref": "#/$defs/DetectedSafetyRisk"
+      },
+      "title": "Detected Risks",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "safety_signals.v1",
+      "default": "safety_signals.v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "detected_risks",
+    "schema_version"
+  ],
+  "title": "SafetySignals",
+  "type": "object"
+}

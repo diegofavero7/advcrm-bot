@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 from pydantic import Field, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 from app.domain.enums import (
     DocumentAvailability,
@@ -15,6 +16,10 @@ from app.domain.enums import (
     ParticipantRole,
     RiskFlag,
     UrgencyLevel,
+)
+from app.domain.fact_vocabulary import (
+    TECHNICAL_PLACEHOLDER_VALUES,
+    canonical_fact_value_out_of_domain,
 )
 from app.domain.models import StrictModel
 from app.domain.validators import secondary_differs_from_primary
@@ -29,6 +34,10 @@ class Participant(StrictModel):
     # Sem nomes ou documentos pessoais nesta fase
 
 
+# Placeholders conhecidos — rejeição determinística (não prova fidelidade semântica).
+_CASE_FACT_PLACEHOLDER_VALUES = TECHNICAL_PLACEHOLDER_VALUES
+
+
 class CaseFact(StrictModel):
     key: str = Field(min_length=1, max_length=128)
     value: str = Field(min_length=1, max_length=2000)
@@ -36,10 +45,34 @@ class CaseFact(StrictModel):
     source_message_ids: list[str] = Field(default_factory=list)
     from_trusted_crm_context: bool = False
 
+    @field_validator("value")
+    @classmethod
+    def reject_known_placeholders(cls, value: str) -> str:
+        if value.strip().lower() in _CASE_FACT_PLACEHOLDER_VALUES:
+            raise PydanticCustomError(
+                "case_fact_placeholder_value",
+                "case_facts.value must be a concrete supported value, not a placeholder",
+            )
+        return value
+
     @model_validator(mode="after")
     def require_source_or_trusted(self) -> CaseFact:
         if not self.source_message_ids and not self.from_trusted_crm_context:
             raise ValueError("Fato sem source_message_ids exige from_trusted_crm_context=true")
+        return self
+
+    @model_validator(mode="after")
+    def canonical_keys_respect_value_domain(self) -> CaseFact:
+        """Chave canônica booleana exige literal do domínio documentado.
+
+        Valor fora do domínio é rejeitado com código estável — não é renomeado,
+        removido nem convertido para produzir sucesso.
+        """
+        if canonical_fact_value_out_of_domain(self.key, self.value):
+            raise PydanticCustomError(
+                "canonical_boolean_fact_value",
+                "canonical boolean fact requires a documented boolean literal",
+            )
         return self
 
 
@@ -66,11 +99,17 @@ class Ambiguity(StrictModel):
     @model_validator(mode="after")
     def ambiguity_coherence(self) -> Ambiguity:
         if self.present and not self.reason:
-            raise ValueError("ambiguity.present=true exige reason")
+            raise PydanticCustomError(
+                "ambiguity_present_requires_reason",
+                "ambiguity.present=true requires reason",
+            )
         if not self.present and (
             self.alternative_area is not None or self.alternative_subject is not None
         ):
-            raise ValueError("Sem ambiguidade, alternative_area/subject devem ser null")
+            raise PydanticCustomError(
+                "ambiguity_alternatives_without_present",
+                "without ambiguity, alternative_area/subject must be null",
+            )
         return self
 
 
@@ -114,22 +153,30 @@ class LeadUnderstanding(StrictModel):
     @model_validator(mode="after")
     def taxonomy_and_area_rules(self) -> LeadUnderstanding:
         if not secondary_differs_from_primary(self.primary_area, self.secondary_area):
-            raise ValueError("secondary_area não pode ser igual a primary_area")
+            raise PydanticCustomError(
+                "secondary_area_equals_primary",
+                "secondary_area must differ from primary_area",
+            )
 
         taxonomy = get_taxonomy()
         if not taxonomy.is_valid_subject(self.primary_area, self.subject):
-            raise ValueError(
-                f"Assunto '{self.subject}' inválido para área '{self.primary_area.value}'"
+            raise PydanticCustomError(
+                "subject_not_in_primary_area",
+                "subject is not valid for primary_area",
             )
 
         allowed_subs = taxonomy.subsubjects_for(self.primary_area, self.subject)
         for sub in self.subsubjects:
             if allowed_subs:
                 if sub not in allowed_subs:
-                    raise ValueError(
-                        f"Subassunto '{sub}' inválido para {self.primary_area.value}/{self.subject}"
+                    raise PydanticCustomError(
+                        "subsubject_not_in_catalog",
+                        "subsubject is not in the catalog for area/subject",
                     )
             elif sub not in {"other", "undetermined"}:
-                raise ValueError(f"Subassunto '{sub}' não permitido sem catálogo detalhado")
+                raise PydanticCustomError(
+                    "subsubject_without_catalog",
+                    "subsubject not allowed when catalog is empty",
+                )
 
         return self

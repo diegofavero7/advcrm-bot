@@ -1,0 +1,39 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "civil",
+    "consumer"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "debt_collection",
+    "unauthorized_charge",
+    "contract_breach",
+    "other",
+    "undetermined"
+  ],
+  "annotation_rationale": "Cobrança contestada sem alegação de fraude. fraud_or_scam é proibido. Área civil ou consumer com subjects de cobrança/contrato aceitáveis.",
+  "case_id": "cmp_disputed_charge",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [
+    "fraud_or_scam"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

@@ -5,19 +5,44 @@
   "acceptable_intents": [
     "spam"
   ],
+  "acceptable_policy_rules": [
+    "non_legal_or_spam"
+  ],
   "acceptable_primary_areas": [
     "other",
     "undetermined"
   ],
   "acceptable_secondary_areas": [],
   "acceptable_subjects": [],
+  "annotation_rationale": "Marketing puro, sem pedido jurídico: nenhuma chave canônica operacional tem sustentação e não há atendimento humano a acionar. Caso semanticamente inequívoco para expectativa negativa de handoff.",
   "case_id": "spam",
+  "critical_expectations": [
+    "action",
+    "handoff",
+    "required_facts"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
-    "eligibility_confirmed"
+    "eligibility_confirmed",
+    "detainee_imprisoned",
+    "explicit_human_request",
+    "legal_request_subject",
+    "minor_child_dependent",
+    "prison_circumstances",
+    "relationship_to_detainee",
+    "unauthorized_loan",
+    "violence_type"
   ],
-  "handoff_required": null,
+  "forbidden_fact_values": {},
+  "forbidden_risks": [
+    "fraud_or_scam"
+  ],
+  "handoff_required": false,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
 }

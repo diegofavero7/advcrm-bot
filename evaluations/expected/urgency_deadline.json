@@ -1,28 +1,42 @@
 {
-  "acceptable_actions": [],
+  "acceptable_actions": [
+    "human_handoff"
+  ],
   "acceptable_intents": [
     "new_legal_lead",
     "undetermined"
   ],
+  "acceptable_policy_rules": [
+    "imminent_deadline_requires_handoff"
+  ],
   "acceptable_primary_areas": [
-    "undetermined",
-    "civil",
-    "criminal",
-    "labor",
-    "family",
-    "other"
+    "undetermined"
   ],
   "acceptable_secondary_areas": [],
-  "acceptable_subjects": [],
+  "acceptable_subjects": [
+    "undetermined"
+  ],
+  "annotation_rationale": "Prazo iminente operacional precede a classificação indeterminada: sem área nem assunto, o caminho correto continua sendo o handoff por prazo. Não anotar extractor_cues de urgent_help aqui — omissão do extrator e intenção/política normal incorretas devem permanecer visíveis na avaliação.",
   "case_id": "urgency_deadline",
+  "critical_expectations": [
+    "handoff",
+    "policy_rule"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
-    "eligibility_confirmed"
+    "eligibility_confirmed",
+    "prison_date"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": true,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
+  "required_fact_values": {},
   "required_risks": [
     "imminent_deadline"
-  ]
+  ],
+  "risks_exhaustive": false
 }

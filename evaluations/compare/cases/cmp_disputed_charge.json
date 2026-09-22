@@ -1,0 +1,24 @@
+{
+  "case_id": "cmp_disputed_charge",
+  "request": {
+    "conversation_id": "conv-cmp_disputed_charge",
+    "event_id": "cmp-cmp_disputed_charge",
+    "known_facts": [],
+    "lead_id": "lead-cmp_disputed_charge",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "A empresa está me cobrando uma dívida que eu discordo do valor"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

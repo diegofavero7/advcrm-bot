@@ -37,7 +37,13 @@ def test_cli_offline_understanding(tmp_path: Path) -> None:
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["mode"] == "offline"
     assert data["schema_name"] == "advcrm_lead_understanding_v1"
-    assert data["response_format"]["json_schema"]["strict"] is True
+    assert data["endpoint"] == "/internal/v1/generate/structured"
+    assert data["prompt_version"] == "lead_understanding.v9"
+    assert data["taxonomy_version"] == "legal_subjects.v1"
+    assert data["payload"]["has_model"] is False
+    assert data["payload"]["has_response_format"] is False
+    assert data["payload"]["max_tokens"] == 2048
+    assert data["payload"]["user_content_has_taxonomy_catalog"] is True
 
 
 def test_cli_offline_next_step_envelope(tmp_path: Path) -> None:

@@ -1,0 +1,24 @@
+{
+  "case_id": "cmp_competing_demands",
+  "request": {
+    "conversation_id": "conv-cmp_competing_demands",
+    "event_id": "cmp-cmp_competing_demands",
+    "known_facts": [],
+    "lead_id": "lead-cmp_competing_demands",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Fui demitido sem receber as verbas e também quero revisar meu benefício do INSS"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

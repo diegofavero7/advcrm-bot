@@ -1,0 +1,30 @@
+{
+  "note": "Previsões stub para testes de métricas — tokens artificiais, sem modelo real.",
+  "thresholds": {
+    "explicit_human_request": {"positive_min": 0.6, "negative_max": 0.4},
+    "existing_client_declaration": {"positive_min": 0.6, "negative_max": 0.4},
+    "case_status_request": {"positive_min": 0.6, "negative_max": 0.4}
+  },
+  "scores": {
+    "fixture_pos_human": {
+      "explicit_human_request": 0.92,
+      "existing_client_declaration": 0.08,
+      "case_status_request": 0.1
+    },
+    "fixture_neg": {
+      "explicit_human_request": 0.1,
+      "existing_client_declaration": 0.12,
+      "case_status_request": 0.09
+    },
+    "fixture_abstain": {
+      "explicit_human_request": 0.5,
+      "existing_client_declaration": 0.5,
+      "case_status_request": 0.5
+    },
+    "fixture_multi": {
+      "explicit_human_request": 0.85,
+      "existing_client_declaration": 0.88,
+      "case_status_request": 0.8
+    }
+  }
+}

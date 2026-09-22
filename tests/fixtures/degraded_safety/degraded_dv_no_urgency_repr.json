@@ -1,0 +1,11 @@
+{
+  "case_id": "degraded_dv_no_urgency_repr",
+  "rationale": "Regressão: criminal+domestic_violence rejeita understanding. Extrator v2 observa DV sem urgent_help/immediate_danger. Expectativa: análise independente + revisão interna — NÃO handoff. Contrasta com degraded_dv_urgent_help_handoff.",
+  "expected_pipeline_status": "degraded_safety",
+  "expected_understanding_valid": false,
+  "expected_safety_observed": true,
+  "expected_attendance_handoff": false,
+  "expected_internal_review": true,
+  "policy_version": "degraded_safety.v2",
+  "representation_note": "DV+violence sem cue de ajuda urgente/perigo imediato não autoriza handoff"
+}

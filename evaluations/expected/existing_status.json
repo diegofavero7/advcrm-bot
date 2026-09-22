@@ -5,6 +5,9 @@
   "acceptable_intents": [
     "existing_client_case_status"
   ],
+  "acceptable_policy_rules": [
+    "existing_client_case_status"
+  ],
   "acceptable_primary_areas": [
     "undetermined",
     "other",
@@ -14,13 +17,26 @@
   ],
   "acceptable_secondary_areas": [],
   "acceptable_subjects": [],
+  "annotation_rationale": "Pedido de andamento de processo. O handoff é obrigatório por cliente existente; fabricar explicit_human_request seria fato sem sustentação.",
   "case_id": "existing_status",
+  "critical_expectations": [
+    "action",
+    "handoff",
+    "policy_rule"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
-    "eligibility_confirmed"
+    "eligibility_confirmed",
+    "explicit_human_request"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": true,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": true,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
 }

@@ -1,8 +1,13 @@
 {
-  "acceptable_actions": [],
+  "acceptable_actions": [
+    "ask_question"
+  ],
   "acceptable_intents": [
     "undetermined",
     "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [
+    "undetermined_classification_requires_clarification"
   ],
   "acceptable_primary_areas": [
     "undetermined",
@@ -13,13 +18,26 @@
     "undetermined",
     "other"
   ],
+  "annotation_rationale": "Procura genérica por advogado: não é pedido de atendente humano e não há área nem assunto, então o roteamento automático fica bloqueado.",
   "case_id": "undetermined",
+  "critical_expectations": [
+    "action",
+    "policy_rule",
+    "required_facts"
+  ],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
-    "eligibility_confirmed"
+    "eligibility_confirmed",
+    "explicit_human_request"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": null,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
 }

@@ -1,0 +1,36 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "social_security",
+    "criminal",
+    "undetermined"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "prison_allowance",
+    "flagrant_arrest",
+    "undetermined"
+  ],
+  "annotation_rationale": "known_facts vazio. Qualquer from_trusted_crm_context=true deve falhar na validação semântica (unverified_trusted_crm_context). A expectativa de classificação é ampla; o diagnóstico principal é a proveniência.",
+  "case_id": "cmp_crm_empty_fake_trust",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

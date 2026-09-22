@@ -3,6 +3,7 @@
   "acceptable_intents": [
     "new_legal_lead"
   ],
+  "acceptable_policy_rules": [],
   "acceptable_primary_areas": [
     "social_security"
   ],
@@ -10,17 +11,25 @@
   "acceptable_subjects": [
     "prison_allowance"
   ],
+  "annotation_rationale": "Prisão categórica em pedido previdenciário: risco operacional presente sem handoff automático. handoff_required=null = ausência de expectativa.",
   "case_id": "ss_prison_allowance",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
     "eligibility_confirmed"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": null,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [
     "relationship_to_detainee"
   ],
+  "required_fact_values": {},
   "required_risks": [
     "arrest_or_detention"
-  ]
+  ],
+  "risks_exhaustive": false
 }

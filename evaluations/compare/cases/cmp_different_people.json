@@ -1,0 +1,33 @@
+{
+  "case_id": "cmp_different_people",
+  "request": {
+    "conversation_id": "conv-cmp_different_people",
+    "event_id": "cmp-cmp_different_people",
+    "known_facts": [],
+    "lead_id": "lead-cmp_different_people",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Minha mãe recebe o benefício há anos"
+      },
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m2",
+        "reply_to_message_id": "m1",
+        "role": "lead",
+        "text": "Meu pai também recebe um benefício"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

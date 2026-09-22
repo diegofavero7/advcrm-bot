@@ -1,0 +1,50 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "family"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "domestic_violence",
+    "child_support",
+    "other"
+  ],
+  "annotation_rationale": "Contraste: DV histórica sem pedido urgente — cues not_informed; não inventar perigo imediato nem forçar handoff só por rótulo histórico.",
+  "case_id": "sf_historical_dv_no_urgent",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
+  "extractor_cues": {
+    "immediate_danger": "not_informed",
+    "urgent_help_request": "not_informed"
+  },
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [
+    "domestic_violence",
+    "violence_or_threat"
+  ],
+  "risk_temporal": {
+    "domestic_violence": [
+      "historical",
+      "unknown"
+    ],
+    "violence_or_threat": [
+      "historical",
+      "unknown"
+    ]
+  },
+  "risks_exhaustive": false
+}

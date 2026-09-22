@@ -1,0 +1,41 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead",
+    "undetermined"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "undetermined",
+    "other"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "undetermined",
+    "other"
+  ],
+  "annotation_rationale": "Pedido direto de atendente/humano. Chave canônica true. Área/assunto podem ficar undetermined — o foco é o fato.",
+  "case_id": "cmp_explicit_human",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [
+    "explicit_human_request"
+  ],
+  "required_fact_values": {
+    "explicit_human_request": [
+      "true"
+    ]
+  },
+  "required_risks": [],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

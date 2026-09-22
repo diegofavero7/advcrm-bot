@@ -1,0 +1,69 @@
+{
+  "acceptable_actions": [
+    "human_handoff"
+  ],
+  "acceptable_intents": [
+    "new_legal_lead",
+    "undetermined"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "labor",
+    "undetermined"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "other",
+    "undetermined"
+  ],
+  "annotation_rationale": "Contraste: prazo próximo + pedido urgente — extrator deve marcar ambos; política degradada prioriza prazo (C) sobre pedido isolado. v5: extractor_cues/risk_temporal no topo (compartilhados entre caminhos).",
+  "case_id": "sf_deadline_plus_urgent_help",
+  "critical_expectations": [
+    "handoff",
+    "policy_rule",
+    "extractor_cues"
+  ],
+  "expectations_version": "eval_expected.v5",
+  "extractor_cues": {
+    "immediate_danger": "not_informed",
+    "urgent_help_request": "present"
+  },
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": true,
+  "must_not_repeat_question": null,
+  "path_expectations": {
+    "degraded_safety": {
+      "acceptable_handoff_reasons": [
+        "legal_deadline_risk"
+      ],
+      "acceptable_policy_rules": [
+        "degraded_safety_imminent_deadline_requires_handoff"
+      ],
+      "acceptable_priorities": [
+        "critical"
+      ]
+    },
+    "success": {
+      "acceptable_policy_rules": [
+        "imminent_deadline_requires_handoff"
+      ]
+    }
+  },
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [
+    "imminent_deadline"
+  ],
+  "risk_temporal": {
+    "imminent_deadline": [
+      "near_future"
+    ]
+  },
+  "risks_exhaustive": false
+}

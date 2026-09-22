@@ -17,11 +17,14 @@ from app.schemas import (  # noqa: E402
     build_strict_json_schema,
 )
 from app.schemas.lead_understanding import LeadUnderstanding  # noqa: E402
+from app.schemas.safety_signals import SafetySignals, SafetySignalsV2  # noqa: E402
 from app.schemas.triage_next_step import TriageNextStep  # noqa: E402
 
 SCHEMA_EXPORTS: tuple[tuple[str, type[object]], ...] = (
     ("lead_understanding.v1.json", LeadUnderstanding),
     ("triage_next_step.v1.json", TriageNextStep),
+    ("safety_signals.v1.json", SafetySignals),
+    ("safety_signals.v2.json", SafetySignalsV2),
     ("triage_analysis_request.v1.json", TriageAnalysisRequest),
 )
 

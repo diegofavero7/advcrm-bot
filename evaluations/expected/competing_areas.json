@@ -3,6 +3,7 @@
   "acceptable_intents": [
     "new_legal_lead"
   ],
+  "acceptable_policy_rules": [],
   "acceptable_primary_areas": [
     "labor",
     "social_security"
@@ -11,14 +12,27 @@
     "social_security",
     "labor"
   ],
-  "acceptable_subjects": [],
+  "acceptable_subjects": [
+    "other",
+    "undetermined",
+    "benefit_review",
+    "accident_benefit"
+  ],
+  "annotation_rationale": "A mensagem informa demissão sem modalidade e revisão de benefício. O catálogo não tem 'demissão sem modalidade': a representação válida é other/undetermined em labor, ou o subject previdenciário se a demanda principal for o benefício. dismissal_without_just_cause não é sustentado.",
   "case_id": "competing_areas",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
   "forbidden_fact_keys": [
     "win_probability",
     "eligibility_confirmed"
   ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
   "handoff_required": null,
   "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
   "required_fact_keys": [],
-  "required_risks": []
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
 }

@@ -1,0 +1,37 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead",
+    "undetermined"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "undetermined",
+    "other"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "undetermined",
+    "other"
+  ],
+  "annotation_rationale": "Prazo próximo sem matéria jurídica definida. Área/assunto undetermined aceitáveis. Risco imminent_deadline no understanding é diagnóstico do modelo (não risco efetivo operacional).",
+  "case_id": "cmp_deadline_no_area",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [
+    "imminent_deadline"
+  ],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

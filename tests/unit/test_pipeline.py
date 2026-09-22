@@ -106,6 +106,12 @@ def _next_step_payload() -> dict[str, Any]:
     }
 
 
+def _safety_payload(**overrides):
+    from tests.helpers.safety import safety_v2
+
+    return safety_v2(**overrides)
+
+
 class FakeClient:
     def __init__(self, responses: list[StructuredCompletionResult | Exception]) -> None:
         self.responses = list(responses)
@@ -118,6 +124,7 @@ class FakeClient:
         json_schema: dict[str, object],
         messages: list[dict[str, str]],
         contract_label: str,
+        organization_id: str | None = None,
     ) -> StructuredCompletionResult:
         self.calls.append(contract_label)
         item = self.responses.pop(0)
@@ -140,31 +147,53 @@ def _completion(payload: dict[str, Any]) -> StructuredCompletionResult:
 
 @pytest.mark.asyncio
 async def test_pipeline_success() -> None:
-    client = FakeClient([_completion(_understanding_payload()), _completion(_next_step_payload())])
+    client = FakeClient(
+        [
+            _completion(_understanding_payload()),
+            _completion(_safety_payload()),
+            _completion(_next_step_payload()),
+        ]
+    )
     proposal = await TriagePipelineService(client, Settings()).run(_request())
     assert proposal.status == ProposalStatus.SUCCESS
     assert proposal.lead_understanding is not None
     assert proposal.triage_next_step is not None
     assert proposal.safe_fallback is None
-    assert client.calls == ["lead_understanding", "triage_next_step"]
+    assert client.calls == ["lead_understanding", "safety_signals", "triage_next_step"]
 
 
 @pytest.mark.asyncio
-async def test_pipeline_stops_after_first_failure() -> None:
-    client = FakeClient([AiRuntimeServerError("down")])
+async def test_pipeline_preserves_failure_telemetry() -> None:
+    err = AiRuntimeServerError(
+        "down",
+        latency_ms=1500.5,
+        retry_count=2,
+        http_status=503,
+        request_id="req-fail-1",
+    )
+    client = FakeClient([err])
     proposal = await TriagePipelineService(client, Settings()).run(_request())
     assert proposal.status == ProposalStatus.FAILED_CLOSED
-    assert proposal.lead_understanding is None
-    assert proposal.triage_next_step is None
-    assert proposal.safe_fallback is not None
-    assert proposal.safe_fallback.source == "deterministic_policy"
-    assert proposal.safe_fallback.recommended_internal_action == "request_human_review"
-    assert client.calls == ["lead_understanding"]
+    assert proposal.metadata.understanding_latency_ms == 1500.5
+    assert proposal.metadata.understanding_retry_count == 2
+    assert proposal.metadata.request_id_understanding == "req-fail-1"
+    assert proposal.error is not None
+    assert proposal.error.category == "server"
+    assert proposal.error.retry_count == 2
+    assert proposal.error.latency_ms == 1500.5
+    assert proposal.error.http_status == 503
+    assert proposal.error.request_id == "req-fail-1"
 
 
 @pytest.mark.asyncio
 async def test_pipeline_preserves_understanding_on_second_failure() -> None:
-    client = FakeClient([_completion(_understanding_payload()), AiRuntimeServerError("down")])
+    client = FakeClient(
+        [
+            _completion(_understanding_payload()),
+            _completion(_safety_payload()),
+            AiRuntimeServerError("down"),
+        ]
+    )
     proposal = await TriagePipelineService(client, Settings()).run(_request())
     assert proposal.status == ProposalStatus.FAILED_CLOSED
     assert proposal.lead_understanding is not None

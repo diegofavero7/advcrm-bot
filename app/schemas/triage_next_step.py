@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 from pydantic import model_validator
+from pydantic_core import PydanticCustomError
 
 from app.domain.enums import HandoffReason, Priority, TriageAction
 from app.domain.models import StrictModel
@@ -28,11 +29,49 @@ class TriageNextStep(StrictModel):
     @model_validator(mode="after")
     def semantic_rules(self) -> TriageNextStep:
         if self.action == TriageAction.ASK_QUESTION:
-            if self.proposed_question is None or not self.proposed_question.strip():
-                raise ValueError("ask_question exige proposed_question não vazia")
-            # Uma etapa lógica — rejeitar múltiplas perguntas concatenadas de forma óbvia
+            if not self.missing_information:
+                raise PydanticCustomError(
+                    "ask_question_requires_missing_information",
+                    "ask_question requires at least one missing_information item",
+                )
+            if len(self.selected_missing_information) != 1:
+                raise PydanticCustomError(
+                    "ask_question_requires_exactly_one_selected",
+                    "ask_question requires exactly one selected_missing_information item",
+                )
+            selected = self.selected_missing_information[0]
+            if selected not in self.missing_information:
+                raise PydanticCustomError(
+                    "ask_question_selected_not_in_missing",
+                    "selected_missing_information must be in missing_information",
+                )
+            if self.proposed_question is None:
+                raise PydanticCustomError(
+                    "ask_question_requires_proposed_question",
+                    "ask_question requires proposed_question non-null",
+                )
+            if not self.proposed_question.strip():
+                raise PydanticCustomError(
+                    "ask_question_requires_proposed_question",
+                    "ask_question requires proposed_question non-empty",
+                )
+            # Limitação mecânica: conta '?' — não garante unicidade semântica da pergunta.
+            # A orientação normativa (uma informação por turno) está no prompt next_step.
             if self.proposed_question.count("?") > 1:
-                raise ValueError("proposed_question deve conter apenas uma etapa lógica")
+                raise PydanticCustomError(
+                    "ask_question_single_question_mark",
+                    "proposed_question must contain at most one logical step (? count)",
+                )
+            if self.requires_human_handoff:
+                raise PydanticCustomError(
+                    "ask_question_forbids_handoff",
+                    "ask_question requires requires_human_handoff=false",
+                )
+            if self.handoff_reason is not None:
+                raise PydanticCustomError(
+                    "ask_question_forbids_handoff_reason",
+                    "ask_question requires handoff_reason=null",
+                )
         elif self.proposed_question is not None:
             raise ValueError(f"Ação {self.action.value} exige proposed_question=null")
 
@@ -40,9 +79,9 @@ class TriageNextStep(StrictModel):
             if self.handoff_reason is None:
                 raise ValueError("requires_human_handoff=true exige handoff_reason")
             if self.action == TriageAction.ASK_QUESTION:
-                raise ValueError(
-                    "handoff obrigatório impede ask_question; use human_handoff "
-                    "ou request_human_review"
+                raise PydanticCustomError(
+                    "ask_question_forbids_handoff",
+                    "handoff obrigatório impede ask_question",
                 )
         elif self.handoff_reason is not None:
             raise ValueError("requires_human_handoff=false exige handoff_reason=null")

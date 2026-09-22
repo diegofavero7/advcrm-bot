@@ -17,8 +17,6 @@ from app.application.services import (
 from app.clients.ai_runtime import AiRuntimeClient
 from app.clients.errors import (
     AiRuntimeConnectionError,
-    AiRuntimeDisabledError,
-    AiRuntimeInvalidJsonError,
     AiRuntimeProtocolError,
     AiRuntimeSchemaValidationError,
     AiRuntimeSemanticValidationError,
@@ -46,12 +44,15 @@ def _settings(**kwargs: object) -> Settings:
     clear_settings_cache()
     base: dict[str, object] = {
         "ai_runtime_enabled": True,
-        "ai_runtime_model": "test-model",
         "ai_runtime_base_url": "http://testserver",
+        "ai_runtime_api_key": "test-s2s-token",
+        "ai_runtime_organization_id": "11111111-1111-4111-8111-111111111111",
         "ai_runtime_max_retries": 1,
         "ai_runtime_retry_after_cap_seconds": 0.01,
         "ai_runtime_timeout_seconds": 5.0,
         "ai_runtime_connect_timeout_seconds": 1.0,
+        "ai_runtime_max_tokens": 2048,
+        "ai_runtime_ready_path": "/ready",
     }
     base.update(kwargs)
     return Settings(**base)  # type: ignore[arg-type]
@@ -160,6 +161,12 @@ def _completion(payload: dict[str, Any]) -> StructuredCompletionResult:
     )
 
 
+def _safety_payload(**overrides):
+    from tests.helpers.safety import safety_v2
+
+    return safety_v2(**overrides)
+
+
 class FakeClient:
     def __init__(self, responses: list[StructuredCompletionResult | Exception]) -> None:
         self.responses = list(responses)
@@ -171,6 +178,7 @@ class FakeClient:
         json_schema: dict[str, object],
         messages: list[dict[str, str]],
         contract_label: str,
+        organization_id: str | None = None,
     ) -> StructuredCompletionResult:
         item = self.responses.pop(0)
         if isinstance(item, Exception):
@@ -197,78 +205,90 @@ async def test_timeout_retry_then_fail() -> None:
 
 
 @pytest.mark.asyncio
-async def test_health_paths() -> None:
-    settings = _settings(ai_runtime_health_path="/health")
+async def test_ready_paths() -> None:
+    settings = _settings(ai_runtime_ready_path="/ready")
 
     def timeout_handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectTimeout("t")
 
     async with AiRuntimeClient(settings, transport=httpx.MockTransport(timeout_handler)) as client:
         with pytest.raises(AiRuntimeTimeoutError):
-            await client.health_check()
+            await client.ready_check()
 
     def conn_handler(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("c")
 
     async with AiRuntimeClient(settings, transport=httpx.MockTransport(conn_handler)) as client:
         with pytest.raises(AiRuntimeConnectionError):
-            await client.health_check()
+            await client.ready_check()
 
     def bad_handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(503, json={})
 
     async with AiRuntimeClient(settings, transport=httpx.MockTransport(bad_handler)) as client:
         with pytest.raises(AiRuntimeServerError):
-            await client.health_check()
+            await client.ready_check()
 
-    async with AiRuntimeClient(_settings(ai_runtime_health_path=None)) as client:
+    async with AiRuntimeClient(_settings(ai_runtime_ready_path=None)) as client:
         with pytest.raises(AiRuntimeProtocolError):
-            await client.health_check()
+            await client.ready_check()
 
 
 @pytest.mark.asyncio
-async def test_payload_max_tokens_and_missing_model() -> None:
+async def test_payload_max_tokens_structured() -> None:
     client = AiRuntimeClient(_settings(ai_runtime_max_tokens=128))
-    payload = client.build_chat_payload(
-        schema_name=SCHEMA_NAME_LEAD,
+    payload = client.build_structured_payload(
         json_schema={"type": "object"},
         messages=[{"role": "user", "content": "x"}],
     )
     assert payload["max_tokens"] == 128
-    # enabled=false permite Settings sem model; build_chat_payload ainda exige model
-    offline = Settings(ai_runtime_enabled=False, ai_runtime_model=None)
-    with pytest.raises(AiRuntimeDisabledError):
-        AiRuntimeClient(offline).build_chat_payload(
-            schema_name=SCHEMA_NAME_LEAD,
-            json_schema={"type": "object"},
-            messages=[{"role": "user", "content": "x"}],
-        )
-    preview = AiRuntimeClient(offline).build_chat_payload(
-        schema_name=SCHEMA_NAME_LEAD,
+    assert "model" not in payload
+    assert "response_format" not in payload
+    # Offline preview ainda monta payload estruturado sem model.
+    offline = Settings(ai_runtime_enabled=False, ai_runtime_max_tokens=2048)
+    preview = AiRuntimeClient(offline).build_structured_payload(
         json_schema={"type": "object"},
         messages=[{"role": "user", "content": "x"}],
-        allow_missing_model=True,
     )
-    assert preview["model"] == "offline-preview"
+    assert preview["schema"] == {"type": "object"}
+    assert "model" not in preview
 
 
 @pytest.mark.asyncio
 async def test_protocol_body_variants() -> None:
     bodies: list[tuple[dict[str, Any], type[Exception]]] = [
         (
-            {"choices": [{"finish_reason": "stop", "message": {"content": "[]"}}]},
-            AiRuntimeInvalidJsonError,
-        ),
-        (
-            {"choices": [{"finish_reason": None, "message": {"content": "{}"}}]},
+            {
+                "choices": [{"finish_reason": "stop", "message": {"content": "{}"}}],
+                "model": "m",
+            },
             AiRuntimeProtocolError,
         ),
         (
-            {"choices": [{"finish_reason": "stop", "message": None}]},
+            {
+                "data": {"a": 1},
+                "model": "m",
+                "finish_reason": None,
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+            },
             AiRuntimeProtocolError,
         ),
         (
-            {"choices": [{"finish_reason": "stop", "message": {"content": 123}}]},
+            {
+                "data": None,
+                "model": "m",
+                "finish_reason": "stop",
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+            },
+            AiRuntimeProtocolError,
+        ),
+        (
+            {
+                "data": "x",
+                "model": "m",
+                "finish_reason": "stop",
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+            },
             AiRuntimeProtocolError,
         ),
     ]
@@ -301,13 +321,9 @@ async def test_invalid_retry_after_then_success() -> None:
         return httpx.Response(
             200,
             json={
+                "data": {"ok": True},
                 "model": "m",
-                "choices": [
-                    {
-                        "finish_reason": "stop",
-                        "message": {"content": json.dumps({"ok": True})},
-                    }
-                ],
+                "finish_reason": "stop",
                 "usage": {
                     "prompt_tokens": 1,
                     "completion_tokens": 1,
@@ -336,12 +352,13 @@ async def test_understanding_schema_and_semantic_failures() -> None:
     with pytest.raises(AiRuntimeSchemaValidationError):
         await LeadUnderstandingService(client, Settings()).run(_request())
 
+    # Coerência via model_validate → semantic_validation (não schema_validation).
     client = FakeClient([_completion(_understanding_payload(subject="debt_collection"))])
-    with pytest.raises(AiRuntimeSchemaValidationError):
+    with pytest.raises(AiRuntimeSemanticValidationError):
         await LeadUnderstandingService(client, Settings()).run(_request())
 
     client = FakeClient([_completion(_understanding_payload(secondary_area="social_security"))])
-    with pytest.raises(AiRuntimeSchemaValidationError):
+    with pytest.raises(AiRuntimeSemanticValidationError):
         await LeadUnderstandingService(client, Settings()).run(_request())
 
     prev = PreviousDecisionSummary(
@@ -401,16 +418,15 @@ async def test_check_runtime_readiness_mocked(monkeypatch: pytest.MonkeyPatch) -
 
     settings = Settings(
         ai_runtime_required=True,
-        ai_runtime_health_path="/health",
+        ai_runtime_ready_path="/ready",
         ai_runtime_base_url="http://testserver",
-        ai_runtime_model="m",
     )
 
     class Ok:
         def __init__(self, *a: object, **k: object) -> None:
             pass
 
-        async def health_check(self) -> None:
+        async def ready_check(self) -> None:
             return None
 
         async def aclose(self) -> None:
@@ -420,7 +436,7 @@ async def test_check_runtime_readiness_mocked(monkeypatch: pytest.MonkeyPatch) -
         def __init__(self, *a: object, **k: object) -> None:
             pass
 
-        async def health_check(self) -> None:
+        async def ready_check(self) -> None:
             raise AiRuntimeServerError("down")
 
         async def aclose(self) -> None:
@@ -493,7 +509,10 @@ async def test_cli_live_pipeline_mocked(tmp_path: Path, monkeypatch: pytest.Monk
     monkeypatch.setattr(
         cli,
         "get_settings",
-        lambda: Settings(ai_runtime_enabled=True, ai_runtime_model="m"),
+        lambda: Settings(
+            ai_runtime_enabled=True,
+            ai_runtime_organization_id="11111111-1111-4111-8111-111111111111",
+        ),
     )
     monkeypatch.setattr(cli, "clear_settings_cache", lambda: None)
 
@@ -655,7 +674,7 @@ def test_eval_main_live_mocked(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
 
     monkeypatch.setattr(ev, "ROOT", tmp_path)
     monkeypatch.setattr(ev, "run_live", fake_live)
-    monkeypatch.setattr(ev, "load_cases", lambda: [])
+    monkeypatch.setattr(ev, "load_cases", lambda **_kwargs: [])
     code = ev.main(["--live"])
     assert code in {0, 4}
 

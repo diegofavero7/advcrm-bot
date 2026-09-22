@@ -1,0 +1,35 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "civil",
+    "consumer"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "debt_collection",
+    "other"
+  ],
+  "annotation_rationale": "Contraste: cobrança contestada ≠ fraud_or_scam affirmed (mesmo com 'nunca contratei' sem afirmar contratação fraudulenta por terceiro).",
+  "case_id": "sf_disputed_debt_no_fraud",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v5",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {},
+  "forbidden_risks": [
+    "fraud_or_scam"
+  ],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {},
+  "required_risks": [],
+  "risks_exhaustive": false
+}

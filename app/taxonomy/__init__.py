@@ -69,6 +69,36 @@ class TaxonomyCatalog(StrictModel):
             return subsubject in {"other", "undetermined"}
         return subsubject in allowed
 
+    def to_prompt_catalog(self) -> dict[str, Any]:
+        """Representação compacta e determinística para o contexto do modelo.
+
+        Derivada da mesma instância usada por ``is_valid_subject`` / subassuntos.
+        Não inventa descrições ausentes na fonte YAML.
+        """
+        areas: dict[str, Any] = {}
+        for area_id in sorted(self.areas.keys()):
+            subjects_map = self.areas[area_id].subjects
+            subjects: dict[str, list[str]] = {
+                subject_id: sorted(subjects_map[subject_id])
+                for subject_id in sorted(subjects_map.keys())
+            }
+            areas[area_id] = {"subjects": subjects}
+
+        payload: dict[str, Any] = {
+            "taxonomy_version": self.taxonomy_version,
+            "areas": areas,
+            "rules": {
+                "use_exact_identifiers": True,
+                "empty_subsubjects_list_allows_only": ["other", "undetermined"],
+                "indeterminacy_subject_ids": ["other", "undetermined"],
+                "indeterminacy_subsubject_ids": ["other", "undetermined"],
+            },
+        }
+        description = (self.description or "").strip()
+        if description:
+            payload["description"] = description
+        return payload
+
 
 def _load_yaml(path: Path) -> dict[str, Any]:
     with path.open(encoding="utf-8") as handle:

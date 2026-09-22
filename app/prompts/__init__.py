@@ -4,6 +4,7 @@ from app.prompts.loader import (
     PromptResource,
     clear_prompt_cache,
     load_lead_understanding_prompt,
+    load_safety_signals_prompt,
     load_triage_next_step_prompt,
 )
 
@@ -11,5 +12,6 @@ __all__ = [
     "PromptResource",
     "clear_prompt_cache",
     "load_lead_understanding_prompt",
+    "load_safety_signals_prompt",
     "load_triage_next_step_prompt",
 ]

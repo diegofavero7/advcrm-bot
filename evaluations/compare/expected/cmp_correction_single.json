@@ -1,0 +1,46 @@
+{
+  "acceptable_actions": [],
+  "acceptable_intents": [
+    "new_legal_lead",
+    "undetermined"
+  ],
+  "acceptable_policy_rules": [],
+  "acceptable_primary_areas": [
+    "social_security",
+    "undetermined"
+  ],
+  "acceptable_secondary_areas": [],
+  "acceptable_subjects": [
+    "retirement",
+    "benefit_review",
+    "undetermined"
+  ],
+  "annotation_rationale": "Correção explícita do mesmo alvo. O modelo deve emitir só o valor 7. Emitir 3 e 7 deixa a chave NÃO resolvida (fact_state.v2) e falha.",
+  "case_id": "cmp_correction_single",
+  "critical_expectations": [],
+  "expectations_version": "eval_expected.v3",
+  "forbidden_fact_keys": [
+    "win_probability",
+    "eligibility_confirmed"
+  ],
+  "forbidden_fact_values": {
+    "contributed_years": [
+      "3",
+      "3 anos"
+    ]
+  },
+  "forbidden_risks": [],
+  "handoff_required": null,
+  "must_not_repeat_question": null,
+  "require_model_inference_skipped": null,
+  "required_fact_keys": [],
+  "required_fact_values": {
+    "contributed_years": [
+      "7",
+      "7 anos"
+    ]
+  },
+  "required_risks": [],
+  "reserved_suite": "understanding_compare_reserved.v1",
+  "risks_exhaustive": false
+}

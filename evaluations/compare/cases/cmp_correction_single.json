@@ -1,0 +1,33 @@
+{
+  "case_id": "cmp_correction_single",
+  "request": {
+    "conversation_id": "conv-cmp_correction_single",
+    "event_id": "cmp-cmp_correction_single",
+    "known_facts": [],
+    "lead_id": "lead-cmp_correction_single",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Contribuí uns 3 anos para o INSS"
+      },
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m2",
+        "reply_to_message_id": "m1",
+        "role": "lead",
+        "text": "Corrigindo: foram 7 anos de contribuição"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

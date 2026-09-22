@@ -11,6 +11,7 @@ from typing import Any
 from app.clients.errors import AiRuntimeProtocolError
 from app.schemas import build_strict_json_schema
 from app.schemas.lead_understanding import LeadUnderstanding
+from app.schemas.safety_signals import SafetySignals, SafetySignalsV2
 from app.schemas.triage_next_step import TriageNextStep
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -18,10 +19,14 @@ _ARTIFACTS_DIR = _REPO_ROOT / "artifacts" / "schemas"
 
 SCHEMA_NAME_LEAD = "advcrm_lead_understanding_v1"
 SCHEMA_NAME_NEXT_STEP = "advcrm_triage_next_step_v1"
+SCHEMA_NAME_SAFETY = "advcrm_safety_signals_v1"
+SCHEMA_NAME_SAFETY_V2 = "advcrm_safety_signals_v2"
 
 _MODEL_BY_ARTIFACT: dict[str, type[Any]] = {
     "lead_understanding.v1.json": LeadUnderstanding,
     "triage_next_step.v1.json": TriageNextStep,
+    "safety_signals.v1.json": SafetySignals,
+    "safety_signals.v2.json": SafetySignalsV2,
 }
 
 
@@ -67,9 +72,19 @@ def get_triage_next_step_schema() -> dict[str, Any]:
     return assert_schema_matches_artifact("triage_next_step.v1.json", TriageNextStep)
 
 
+@lru_cache
+def get_safety_signals_schema(schema_version: str = "safety_signals.v2") -> dict[str, Any]:
+    if schema_version == "safety_signals.v1":
+        return assert_schema_matches_artifact("safety_signals.v1.json", SafetySignals)
+    if schema_version == "safety_signals.v2":
+        return assert_schema_matches_artifact("safety_signals.v2.json", SafetySignalsV2)
+    raise AiRuntimeProtocolError(f"schema_version de safety desconhecida: {schema_version}")
+
+
 def clear_schema_cache() -> None:
     get_lead_understanding_schema.cache_clear()
     get_triage_next_step_schema.cache_clear()
+    get_safety_signals_schema.cache_clear()
 
 
 def verify_all_ai_schemas() -> None:

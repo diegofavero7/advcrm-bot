@@ -25,9 +25,9 @@ flowchart LR
 
 O bot **ainda não** envia mensagens WhatsApp e **ainda não** grava no AdvCRM. Resultados são propostas.
 
-## Fase 1.1 — o que faz
+## Fase 1.1.1 — o que faz
 
-- Cliente HTTP configurável (`AI_RUNTIME_*`) com Chat Completions + `json_schema` estrito
+- Cliente HTTP para AdvCRM AI: `POST /internal/v1/generate/structured` (sem Chat Completions)
 - Duas chamadas: `lead_understanding.v1` e `triage_next_step.v1`
 - `TriageProposal` com `safe_fallback` em falha técnica (sem fabricar next step)
 - CLI offline/live: `python -m app.cli.triage`
@@ -52,18 +52,18 @@ Runtime desabilitado por padrão (`AI_RUNTIME_ENABLED=false`).
 make run
 ```
 
-- `GET /ready` — config + taxonomia + playbooks + schemas/prompts. Runtime só se `AI_RUNTIME_REQUIRED=true` (exige `AI_RUNTIME_HEALTH_PATH`).
+- `GET /ready` — config + taxonomia + playbooks + schemas/prompts. Runtime só se `AI_RUNTIME_REQUIRED=true` (exige `AI_RUNTIME_READY_PATH`, tipicamente `/ready` do AdvCRM AI).
 
 ## CLI de triagem
 
 ```bash
-# Offline — monta payloads, não chama runtime
+# Offline — monta payloads structured, não chama runtime
 python -m app.cli.triage --input examples/valid/01_prison_allowance_spouse.json --understanding-only
 
 # Next step offline — envelope próprio
 python -m app.cli.triage --input envelope.json --next-step-only
 
-# Live — exige AI_RUNTIME_ENABLED=true e modelo
+# Live — exige AI_RUNTIME_ENABLED=true e AI_RUNTIME_ORGANIZATION_ID (UUID)
 python -m app.cli.triage --input examples/valid/01_prison_allowance_spouse.json --live
 ```
 
@@ -74,7 +74,7 @@ python -m app.cli.triage --input examples/valid/01_prison_allowance_spouse.json 
 ```bash
 make eval-offline
 # Live (manual, nunca no CI):
-# AI_RUNTIME_ENABLED=true AI_RUNTIME_MODEL=... python -m evaluations.runner --live
+# AI_RUNTIME_ENABLED=true AI_RUNTIME_ORGANIZATION_ID=<uuid> python -m evaluations.runner --live
 ```
 
 Ver [evaluations/README.md](evaluations/README.md) e [docs/evaluation.md](docs/evaluation.md).

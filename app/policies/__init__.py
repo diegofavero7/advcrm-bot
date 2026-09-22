@@ -11,6 +11,7 @@ from app.domain.enums import (
     Intent,
     LegalArea,
     Priority,
+    RiskFlag,
     TriageAction,
     UrgencyLevel,
 )
@@ -18,6 +19,21 @@ from app.schemas.inbound import TriageAnalysisRequest
 from app.schemas.lead_understanding import LeadUnderstanding
 from app.schemas.triage_next_step import TriageNextStep
 from app.taxonomy import validate_area_subject
+
+# Chave canônica de missing_information (string aberta no contrato v1).
+LEGAL_ISSUE_DESCRIPTION_KEY = "legal_issue_description"
+UNDETERMINED_CLARIFICATION_QUESTION = (
+    "Conte brevemente qual problema jurídico você precisa resolver?"
+)
+FLAGRANT_ARREST_SUBJECT = "flagrant_arrest"
+
+UNDETERMINED_CLARIFICATION_FLAG = "undetermined_classification_requires_clarification"
+DOMESTIC_VIOLENCE_HANDOFF_FLAG = "domestic_violence_urgency_requires_handoff"
+
+# Níveis de urgência altos/imediatos já existentes no contrato v1.
+ELEVATED_URGENCY_LEVELS: frozenset[UrgencyLevel] = frozenset(
+    {UrgencyLevel.HIGH, UrgencyLevel.IMMEDIATE}
+)
 
 
 class ConfidenceBand(StrEnum):
@@ -134,16 +150,89 @@ def fail_closed_on_invalid(
     return cfg.fail_closed
 
 
+def is_fully_undetermined_classification(understanding: LeadUnderstanding) -> bool:
+    """Ausência completa de área e assunto.
+
+    Independente de confidence e de ``ambiguity.needs_confirmation``: sem área nem
+    assunto não há destino para rotear, mesmo que o modelo afirme não precisar
+    confirmar. Ambiguidade parcial (área ou assunto definidos) NÃO entra aqui e
+    permanece recomendação.
+    """
+    return (
+        understanding.primary_area == LegalArea.UNDETERMINED
+        and understanding.subject == "undetermined"
+    )
+
+
+def build_undetermined_clarification_step() -> TriageNextStep:
+    """Esclarecimento determinístico único para classificação totalmente indeterminada.
+
+    Reutilizado pela precedência obrigatória e pela reconciliação final, para que
+    não existam dois mecanismos divergentes com proveniências diferentes.
+    """
+    return TriageNextStep(
+        action=TriageAction.ASK_QUESTION,
+        priority=Priority.NORMAL,
+        missing_information=[LEGAL_ISSUE_DESCRIPTION_KEY],
+        selected_missing_information=[LEGAL_ISSUE_DESCRIPTION_KEY],
+        proposed_question=UNDETERMINED_CLARIFICATION_QUESTION,
+        requires_human_handoff=False,
+        handoff_reason=None,
+        policy_flags=[UNDETERMINED_CLARIFICATION_FLAG],
+    )
+
+
+def requires_domestic_violence_handoff(
+    understanding: LeadUnderstanding,
+    effective_risks: frozenset[RiskFlag],
+) -> bool:
+    """Encaminhamento operacional de violência doméstica com urgência elevada.
+
+    Predicado exato: ``domestic_violence`` presente nos riscos **operacionais**
+    (extrator confirmado ou taxonomia + fato explícito estruturado) E
+    ``urgency in {high, immediate}``.
+
+    Não exige ``safety.level=high`` nem ``safety.recommend_handoff=true``: a
+    combinação acima já basta. Não generaliza para qualquer risco, qualquer
+    urgency alta, nem para menção histórica sem o sinal operacional estruturado.
+    """
+    if RiskFlag.DOMESTIC_VIOLENCE not in effective_risks:
+        return False
+    return understanding.urgency in ELEVATED_URGENCY_LEVELS
+
+
 def decide_conservative_action(
     understanding: LeadUnderstanding,
     *,
     explicit_human_request: bool = False,
     questions_asked: int = 0,
     settings: Settings | None = None,
+    effective_risks: frozenset[RiskFlag] | None = None,
 ) -> TriageNextStep:
-    """Produz decisão conservadora determinística a partir da compreensão."""
+    """Produz decisão conservadora determinística a partir da compreensão.
+
+    Precedência obrigatória (primeira correspondente vence) — conservative_action.v7:
+    1. existing_client_case_status
+    2. explicit_human_or_existing_client
+    3. flagrant_arrest_requires_handoff  (subject estruturado)
+    4. imminent_deadline_requires_handoff  (sinais operacionais / extractor)
+    5. immediate_urgency_blocks_auto_route
+    6. domestic_violence_urgency_requires_handoff  (operacional + urgência elevada)
+    7. non_legal_or_spam
+    8. low_confidence
+    9. max_questions
+    10. undetermined_classification_requires_clarification
+    Depois: recomendações needs_clarification / high_confidence_route_candidate.
+    Sem matching textual no lead. effective_risks = sinais operacionais quando
+    fornecidos; senão understanding.safety.detected_risks (compat testes).
+    """
     cfg = settings or get_settings()
     flags: list[str] = []
+    risks = (
+        effective_risks
+        if effective_risks is not None
+        else frozenset(understanding.safety.detected_risks)
+    )
 
     if understanding.intent == Intent.EXISTING_CLIENT_CASE_STATUS:
         return TriageNextStep(
@@ -173,6 +262,30 @@ def decide_conservative_action(
             policy_flags=["explicit_human_or_existing_client"],
         )
 
+    if understanding.subject == FLAGRANT_ARREST_SUBJECT:
+        return TriageNextStep(
+            action=TriageAction.HUMAN_HANDOFF,
+            priority=Priority.CRITICAL,
+            missing_information=[],
+            selected_missing_information=[],
+            proposed_question=None,
+            requires_human_handoff=True,
+            handoff_reason=HandoffReason.CRIMINAL_EMERGENCY,
+            policy_flags=["flagrant_arrest_requires_handoff"],
+        )
+
+    if RiskFlag.IMMINENT_DEADLINE in risks:
+        return TriageNextStep(
+            action=TriageAction.HUMAN_HANDOFF,
+            priority=Priority.CRITICAL,
+            missing_information=[],
+            selected_missing_information=[],
+            proposed_question=None,
+            requires_human_handoff=True,
+            handoff_reason=HandoffReason.LEGAL_DEADLINE_RISK,
+            policy_flags=["imminent_deadline_requires_handoff"],
+        )
+
     if understanding.urgency == UrgencyLevel.IMMEDIATE or understanding.safety.recommend_handoff:
         return TriageNextStep(
             action=TriageAction.HUMAN_HANDOFF,
@@ -183,6 +296,18 @@ def decide_conservative_action(
             requires_human_handoff=True,
             handoff_reason=HandoffReason.IMMEDIATE_RISK,
             policy_flags=["immediate_urgency_blocks_auto_route"],
+        )
+
+    if requires_domestic_violence_handoff(understanding, risks):
+        return TriageNextStep(
+            action=TriageAction.HUMAN_HANDOFF,
+            priority=Priority.HIGH,
+            missing_information=[],
+            selected_missing_information=[],
+            proposed_question=None,
+            requires_human_handoff=True,
+            handoff_reason=HandoffReason.SENSITIVE_SITUATION,
+            policy_flags=[DOMESTIC_VIOLENCE_HANDOFF_FLAG],
         )
 
     if understanding.intent in {Intent.SPAM, Intent.NON_LEGAL_CONTACT}:
@@ -223,6 +348,9 @@ def decide_conservative_action(
             handoff_reason=HandoffReason.MAXIMUM_QUESTIONS_REACHED,
             policy_flags=["max_questions"],
         )
+
+    if is_fully_undetermined_classification(understanding):
+        return build_undetermined_clarification_step()
 
     if band == ConfidenceBand.MEDIUM or understanding.ambiguity.present:
         flags.append("needs_clarification")

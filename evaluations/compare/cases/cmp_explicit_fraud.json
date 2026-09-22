@@ -1,0 +1,24 @@
+{
+  "case_id": "cmp_explicit_fraud",
+  "request": {
+    "conversation_id": "conv-cmp_explicit_fraud",
+    "event_id": "cmp-cmp_explicit_fraud",
+    "known_facts": [],
+    "lead_id": "lead-cmp_explicit_fraud",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Abriram um empréstimo no meu nome sem eu autorizar e sumiram com o dinheiro"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}

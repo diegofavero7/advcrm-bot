@@ -15,7 +15,16 @@
         "source_message_ids": [
           "m1"
         ],
-        "value": "cônjuge"
+        "value": "cônjuge (marido)"
+      },
+      {
+        "certainty": "explicit",
+        "from_trusted_crm_context": false,
+        "key": "detainee_imprisoned",
+        "source_message_ids": [
+          "m1"
+        ],
+        "value": "true"
       },
       {
         "certainty": "explicit",
@@ -25,18 +34,22 @@
           "m2"
         ],
         "value": "emprego registrado mencionado"
+      },
+      {
+        "certainty": "explicit",
+        "from_trusted_crm_context": false,
+        "key": "minor_child_dependent",
+        "source_message_ids": [
+          "m2"
+        ],
+        "value": "filho menor"
       }
     ],
     "confidence": 0.91,
-    "documents_availability": "partial",
+    "documents_availability": "unknown",
     "intent": "new_legal_lead",
     "language": "pt-BR",
-    "mentioned_documents": [
-      {
-        "availability": "available",
-        "label": "carteira de trabalho"
-      }
-    ],
+    "mentioned_documents": [],
     "participants": [
       {
         "relationship": "spouse",
@@ -53,27 +66,28 @@
     ],
     "primary_area": "social_security",
     "procedural_situation": {
-      "existing_case": false,
+      "existing_case": null,
       "prior_attempts": null,
       "prior_denial": null,
       "prior_request": null,
       "stage": null
     },
-    "reasoning_summary": "Relata prisão do cônjuge e solicita auxílio-reclusão",
+    "reasoning_summary": "Relata prisão do marido, pede auxílio-reclusão; menciona emprego registrado e filho menor",
     "safety": {
       "detected_risks": [
         "arrest_or_detention",
         "child_or_vulnerable_person"
       ],
       "level": "normal",
-      "reason": "Sem risco imediato adicional além da prisão já informada",
+      "reason": "Prisão relatada e dependente menor; sem ameaça ou urgência imediata adicionais",
       "recommend_handoff": false
     },
     "schema_version": "lead_understanding.v1",
     "secondary_area": null,
     "subject": "prison_allowance",
     "subsubjects": [
-      "spouse_relationship"
+      "spouse_relationship",
+      "child_dependent"
     ],
     "urgency": "normal"
   },

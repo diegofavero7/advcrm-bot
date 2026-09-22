@@ -1,0 +1,24 @@
+{
+  "case_id": "sf_historical_dv_no_urgent",
+  "request": {
+    "conversation_id": "conv-sf_historical_dv_no_urgent",
+    "event_id": "eval-sf_historical_dv_no_urgent",
+    "known_facts": [],
+    "lead_id": "lead-sf_historical_dv_no_urgent",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T14:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Em 2018 sofri violência doméstica; hoje só quero informação sobre pensão"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-eval",
+    "triage_state": "pending_classification"
+  }
+}

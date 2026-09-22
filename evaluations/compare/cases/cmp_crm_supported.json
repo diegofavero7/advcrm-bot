@@ -1,0 +1,32 @@
+{
+  "case_id": "cmp_crm_supported",
+  "request": {
+    "conversation_id": "conv-cmp_crm_supported",
+    "event_id": "cmp-cmp_crm_supported",
+    "known_facts": [
+      {
+        "certainty": "explicit",
+        "from_trusted_crm_context": true,
+        "key": "explicit_human_request",
+        "source_message_ids": [],
+        "value": "true"
+      }
+    ],
+    "lead_id": "lead-cmp_crm_supported",
+    "messages": [
+      {
+        "content_type": "text",
+        "created_at": "2026-09-20T15:00:00-03:00",
+        "direction": "inbound",
+        "message_id": "m1",
+        "reply_to_message_id": null,
+        "role": "lead",
+        "text": "Quero continuar o atendimento"
+      }
+    ],
+    "previous_decision": null,
+    "source": "whatsapp",
+    "tenant_id": "tenant-compare",
+    "triage_state": "pending_classification"
+  }
+}
